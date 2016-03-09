@@ -1,5 +1,6 @@
 #include "AppDelegate.h"
 #include <iostream>
+#import <Cocoa/Cocoa.h>
 
 USING_NS_CC;
 
@@ -73,7 +74,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
     if(!glview) {
-        glview = GLViewImpl::createWithRect("CocosPlaygrounds", Rect(0, 0, 960, 640));
+		glview = GLViewImpl::createWithRect("CocosPlaygrounds", cocos2d::Rect(0, 0, 960, 640));
         director->setOpenGLView(glview);
     }
 
@@ -98,6 +99,9 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
 							 Director::getInstance()->runWithScene(scene);
 						 ));
+
+	NSWindowController *wc = [[NSWindowController alloc] initWithWindowNibName:@"Interpreter"];
+	[wc showWindow:nil];
 
     return true;
 }
