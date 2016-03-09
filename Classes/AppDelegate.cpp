@@ -1,14 +1,16 @@
 #include "AppDelegate.h"
-#include "HelloWorldScene.h"
-
 #include <iostream>
 
 USING_NS_CC;
 
-static const int argc = 2;
-static const char *argv[2] = {
+static const int argc = 10;
+static const char *argv[argc] = {
 	"/usr/local/opt/root/etc",
-	"-I/usr/local/opt/root/etc"
+	"-I/usr/local/opt/root/etc",
+	"-I/Applications/Cocos/Cocos2d-x/cocos2d-x-3.10/cocos",
+	"-I/Applications/Cocos/Cocos2d-x/cocos2d-x-3.10/cocos/editor-support",
+	"-I/Applications/Cocos/Cocos2d-x/cocos2d-x-3.10/external",
+	"-I/Applications/Cocos/Cocos2d-x/cocos2d-x-3.10/external/glfw3/include/mac",
 };
 static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 
@@ -17,8 +19,13 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 AppDelegate::AppDelegate()
 : _interpreter(argc, argv, llvmdir)
 {
-	_interpreter.process(STR(#include <iostream>));
+	_interpreter.loadFile("iostream");
+	_interpreter.loadFile("cocos2d.h");
+	_interpreter.loadFile("cocostudio/CocoStudio.h");
+	_interpreter.loadFile("/Applications/Cocos/Cocos2d-x/cocos2d-x-3.10/prebuilt/mac/libcocos2d Mac.dylib");
+
 	_interpreter.process(STR(using namespace std;));
+	_interpreter.process(STR(using namespace cocos2d;));
 	_interpreter.process(STR(cout << "Hello World!" << endl;));
 
 	std::string s = "exported string";
@@ -33,8 +40,7 @@ AppDelegate::~AppDelegate()
 {
 }
 
-void AppDelegate::exportToInterpreter(const std::string &typeName, const std::string& name, void *obj)
-{
+void AppDelegate::exportToInterpreter(const std::string &typeName, const std::string& name, void *obj) {
 	char buff[100];
 	std::string rawType = typeName;
 	bool exportAsPointer = rawType.back() == '*';
@@ -55,8 +61,7 @@ void AppDelegate::exportToInterpreter(const std::string &typeName, const std::st
 
 //if you want a different context,just modify the value of glContextAttrs
 //it will takes effect on all platforms
-void AppDelegate::initGLContextAttrs()
-{
+void AppDelegate::initGLContextAttrs() {
     //set OpenGL context attributions,now can only set six attributions:
     //red,green,blue,alpha,depth,stencil
     GLContextAttrs glContextAttrs = {8, 8, 8, 8, 24, 8};
@@ -83,13 +88,17 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     FileUtils::getInstance()->addSearchPath("res");
 
+	_interpreter.process(STR(
+							 auto rootNode = CSLoader::createNode("MainScene.csb");
 
+							 auto layer = Layer::create();
+							 layer->addChild(rootNode);
 
-    // create a scene. it's an autorelease object
-    auto scene = HelloWorld::createScene();
+							 auto scene = Scene::create();
+							 scene->addChild(layer);
 
-    // run
-    director->runWithScene(scene);
+							 Director::getInstance()->runWithScene(scene);
+						 ));
 
     return true;
 }
