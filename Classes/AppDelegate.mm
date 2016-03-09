@@ -100,7 +100,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 							 Director::getInstance()->runWithScene(scene);
 						 ));
 
-	NSWindowController *wc = [[NSWindowController alloc] initWithWindowNibName:@"Interpreter"];
+	NSWindowController *wc = (__bridge NSWindowController *)(__bridge_retained void *)[[NSWindowController alloc] initWithWindowNibName:@"Interpreter"];
 	[wc showWindow:nil];
 
     return true;
