@@ -22,7 +22,6 @@ AppDelegate::AppDelegate()
 	_interpreter.loadFile("iostream");
 	_interpreter.loadFile("cocos2d.h");
 	_interpreter.loadFile("cocostudio/CocoStudio.h");
-	_interpreter.loadFile("/Applications/Cocos/Cocos2d-x/cocos2d-x-3.10/prebuilt/mac/libcocos2d Mac.dylib");
 
 	_interpreter.process(STR(using namespace std;));
 	_interpreter.process(STR(using namespace cocos2d;));

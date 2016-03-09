@@ -130,11 +130,11 @@
 		D44C620D132DFF430009C878 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		D44C620F132DFF4E0009C878 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		D6B0611A1803AB670077942B /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/System/Library/Frameworks/CoreMotion.framework; sourceTree = DEVELOPER_DIR; };
-		E4C830521C8F0E44009A81D1 /* libclingInterpreter.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclingInterpreter.a; path = ../../../../../../usr/local/opt/cling/lib/libclingInterpreter.a; sourceTree = "<group>"; };
-		E4C830541C8F0E56009A81D1 /* libclang.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libclang.dylib; path = ../../../../../../usr/local/opt/cling/lib/libclang.dylib; sourceTree = "<group>"; };
-		E4C830571C8F0F44009A81D1 /* libCling.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libCling.so; path = ../../../../../../usr/local/opt/root/lib/libCling.so; sourceTree = "<group>"; };
+		E4C830521C8F0E44009A81D1 /* libclingInterpreter.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libclingInterpreter.a; path = /usr/local/opt/cling/lib/libclingInterpreter.a; sourceTree = "<absolute>"; };
+		E4C830541C8F0E56009A81D1 /* libclang.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libclang.dylib; path = /usr/local/opt/cling/lib/libclang.dylib; sourceTree = "<absolute>"; };
+		E4C830571C8F0F44009A81D1 /* libCling.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libCling.so; path = /usr/local/opt/root/lib/libCling.so; sourceTree = "<absolute>"; };
 		E4C8305D1C8F2443009A81D1 /* libCling.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libCling.so; path = /usr/local/opt/root/lib/libCling.so; sourceTree = "<absolute>"; };
-		E4C830621C909DA5009A81D1 /* libcocos2d Mac.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libcocos2d Mac.dylib"; path = "../../../../../../Applications/Cocos/Cocos2d-x/cocos2d-x-3.10/prebuilt/mac/libcocos2d Mac.dylib"; sourceTree = "<group>"; };
+		E4C830621C909DA5009A81D1 /* libcocos2d Mac.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libcocos2d Mac.dylib"; path = "/Applications/Cocos/Cocos2d-x/cocos2d-x-3.10/prebuilt/mac/libcocos2d Mac.dylib"; sourceTree = "<absolute>"; };
 		ED545A7B1B68A1F400C3958E /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.4.sdk/usr/lib/libiconv.dylib; sourceTree = DEVELOPER_DIR; };
 		ED545A7D1B68A1FA00C3958E /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -210,7 +210,6 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
-				E4C830621C909DA5009A81D1 /* libcocos2d Mac.dylib */,
 				46880B8319C43A87006E1F66 /* Classes */,
 				46880B7519C43A67006E1F66 /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
@@ -226,6 +225,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E4C830621C909DA5009A81D1 /* libcocos2d Mac.dylib */,
 				E4C830571C8F0F44009A81D1 /* libCling.so */,
 				E4C830541C8F0E56009A81D1 /* libclang.dylib */,
 				E4C830521C8F0E44009A81D1 /* libclingInterpreter.a */,
