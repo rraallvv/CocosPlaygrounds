@@ -62,8 +62,38 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 	self.textView.string = [NSString stringWithFormat:@"%s", expression.c_str()];
 }
 
-- (void)textDidChange:(NSNotification *)notification {
-	//NSLog(@"Ok");
+- (void)sendEvent:(NSEvent*)event {
+	if ([event type] == NSKeyDown) {
+		if (([event modifierFlags] & NSDeviceIndependentModifierFlagsMask) == NSCommandKeyMask) {
+			if ([[event charactersIgnoringModifiers] caseInsensitiveCompare:@"x"] == NSOrderedSame) {
+				if ([NSApp sendAction:@selector(cut:) to:nil from:self])
+					return;
+
+			} else if ([[event charactersIgnoringModifiers] caseInsensitiveCompare:@"c"] == NSOrderedSame) {
+				if ([NSApp sendAction:@selector(copy:) to:nil from:self])
+					return;
+
+			} else if ([[event charactersIgnoringModifiers] caseInsensitiveCompare:@"v"] == NSOrderedSame) {
+				if ([NSApp sendAction:@selector(paste:) to:nil from:self])
+					return;
+
+			} else if ([[event charactersIgnoringModifiers] isEqualToString:@"z"]) {
+				if ([NSApp sendAction:@selector(undo:) to:nil from:self])
+					return;
+
+			} else if ([[event charactersIgnoringModifiers] caseInsensitiveCompare:@"a"] == NSOrderedSame) {
+				if ([NSApp sendAction:@selector(selectAll:) to:nil from:self])
+					return;
+			}
+
+		} else if (([event modifierFlags] & NSDeviceIndependentModifierFlagsMask) == (NSCommandKeyMask | NSShiftKeyMask)) {
+			if ([[event charactersIgnoringModifiers] isEqualToString:@"Z"]) {
+				if ([NSApp sendAction:@selector(redo:) to:nil from:self])
+					return;
+			}
+		}
+	}
+	[super sendEvent:event];
 }
 
 - (BOOL)textView:(NSTextView *)aTextView shouldChangeTextInRange:(NSRange)affectedCharRange replacementString:(NSString *)replacementString {
