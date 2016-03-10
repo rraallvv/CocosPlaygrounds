@@ -2,7 +2,6 @@
 #define  _APP_DELEGATE_H_
 
 #include "cocos2d.h"
-#include "cling/Interpreter/Interpreter.h"
 
 /**
 @brief    The cocos2d Application.
@@ -11,9 +10,6 @@ The reason for implement as private inheritance is to hide some interface call b
 */
 class  AppDelegate : private cocos2d::Application
 {
-	cling::Interpreter _interpreter;
-	void exportToInterpreter(const std::string &typeName, const std::string& name, void *obj);
-
 public:
     AppDelegate();
     virtual ~AppDelegate();
