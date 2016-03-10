@@ -91,6 +91,51 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 				if ([NSApp sendAction:@selector(redo:) to:nil from:self])
 					return;
 			}
+		} else {
+			switch( [event keyCode] ) {
+				case 126: {     // up arrow
+					__block NSInteger currentPosition =  self.textView.selectedRange.location;
+					dispatch_async(dispatch_get_main_queue(), ^{
+						NSString *text = self.textView.string;
+						if (currentPosition <= 0) currentPosition = text.length;
+
+						NSInteger start = [text rangeOfString:@"\n" options:NSBackwardsSearch range:NSMakeRange(0, currentPosition - 1)].location;
+						if (start == NSNotFound) start = -1;
+
+						NSInteger length = [[text substringFromIndex:start + 1] rangeOfString:@"\n"].location;
+
+						self.textView.selectedRange = NSMakeRange(start + 1, length + 1);
+					});
+				}
+					break;
+				case 125: {     // down arrow
+					__block NSInteger currentPosition =  self.textView.selectedRange.location;
+					dispatch_async(dispatch_get_main_queue(), ^{
+						NSString *text = self.textView.string;
+
+						NSInteger start = -1;
+						if (currentPosition < text.length) {
+							start = [[text substringFromIndex:currentPosition] rangeOfString:@"\n"].location;
+							if (start == NSNotFound) {
+								start = -1;
+							} else {
+								start = currentPosition + start;
+							}
+						}
+
+						NSInteger length = [[text substringFromIndex:start + 1] rangeOfString:@"\n"].location;
+
+						self.textView.selectedRange = NSMakeRange(start + 1, length + 1);
+					});
+				}
+					break;
+				case 124:       // right arrow
+				case 123:       // left arrow
+					NSLog(@"Arrow key pressed!");
+					break;
+				default:
+					break;
+			}
 		}
 	}
 	[super sendEvent:event];
