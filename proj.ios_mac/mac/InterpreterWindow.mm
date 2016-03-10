@@ -23,33 +23,14 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 
 @implementation InterpreterWindow
 
-- (void)textDidChange:(NSNotification *)notification {
-	//NSLog(@"Ok");
-}
+-(void)awakeFromNib {
+	self.textView.font = [NSFont fontWithName:@"Menlo" size:11];
+	self.textView.continuousSpellCheckingEnabled = NO;
+	self.textView.automaticQuoteSubstitutionEnabled = NO;
+	self.textView.enabledTextCheckingTypes = 0;
 
-- (BOOL)textView:(NSTextView *)aTextView shouldChangeTextInRange:(NSRange)affectedCharRange replacementString:(NSString *)replacementString {
-	__block NSString *text = self.textView.string;
-	NSRange range = [text rangeOfString:@"\n" options:NSBackwardsSearch];
-
-	BOOL isMultiline = range.location != NSNotFound;
-	BOOL isCursorInLastLine = range.location >= affectedCharRange.location;
-	BOOL newTextHasNewline = [replacementString rangeOfString:@"\n"].location != NSNotFound;
-
-	if ((isMultiline && isCursorInLastLine) || newTextHasNewline) {
-		NSAttributedString* attributedString = [[NSAttributedString alloc] initWithString:replacementString];
-		[self.textView.textStorage appendAttributedString:attributedString];
-		dispatch_async(dispatch_get_main_queue(), ^{
-			[self.textView scrollRangeToVisible:NSMakeRange(text.length, 0)];
-			[self.textView setSelectedRange:NSMakeRange(text.length, 0)];
-		});
-		return NO;
-	}
-	return YES;
-}
-
-- (void)setupInterpreter {
 	_interpreter = new cling::Interpreter(argc, argv, llvmdir);
-	
+
 	_interpreter->loadFile("iostream");
 	_interpreter->loadFile("cocos2d.h");
 	_interpreter->loadFile("cocostudio/CocoStudio.h");
@@ -65,20 +46,46 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 	_interpreter->process(STR(cout << s << endl;));
 	_interpreter->process(STR(cout << *ps << endl;));
 
-	_interpreter->process(STR(
-							 auto rootNode = CSLoader::createNode("MainScene.csb");
+	std::string expression =
+	"/************ CocosPlaygrounds *************\n"
+	" * Type C++ code and press enter to run it *\n"
+	" *******************************************/\n\n"
+	"auto rootNode = CSLoader::createNode(\"MainScene.csb\");\n"
+	"auto layer = Layer::create();\n"
+	"layer->addChild(rootNode);\n"
+	"auto scene = Scene::create();\n"
+	"scene->addChild(layer);\n"
+	"Director::getInstance()->runWithScene(scene);\n";
 
-							 auto layer = Layer::create();
-							 layer->addChild(rootNode);
+	_interpreter->process(expression);
 
-							 auto scene = Scene::create();
-							 scene->addChild(layer);
+	self.textView.string = [NSString stringWithFormat:@"%s", expression.c_str()];
+}
 
-							 Director::getInstance()->runWithScene(scene);
-							 ));
+- (void)textDidChange:(NSNotification *)notification {
+	//NSLog(@"Ok");
+}
 
-	NSWindowController *wc = (__bridge NSWindowController *)(__bridge_retained void *)[[NSWindowController alloc] initWithWindowNibName:@"Interpreter"];
-	[wc showWindow:nil];
+- (BOOL)textView:(NSTextView *)aTextView shouldChangeTextInRange:(NSRange)affectedCharRange replacementString:(NSString *)replacementString {
+	__block NSString *text = self.textView.string;
+	__block NSRange range = [text rangeOfString:@"\n" options:NSBackwardsSearch];
+
+	BOOL isMultiline = range.location != NSNotFound;
+	BOOL isCursorInLastLine = range.location >= affectedCharRange.location;
+	BOOL newTextHasNewline = [replacementString rangeOfString:@"\n"].location != NSNotFound;
+
+	if ((isMultiline && isCursorInLastLine) || newTextHasNewline) {
+		NSAttributedString* attributedString = [[NSAttributedString alloc] initWithString:replacementString];
+		[self.textView.textStorage appendAttributedString:attributedString];
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self.textView scrollRangeToVisible:NSMakeRange(text.length, 0)];
+			[self.textView setSelectedRange:NSMakeRange(text.length, 0)];
+			std::string expression = [text substringFromIndex:NSMaxRange(range)].UTF8String;
+			_interpreter->process(expression);
+		});
+		return NO;
+	}
+	return YES;
 }
 
 - (void)exportToInterpreter:(const std::string)typeName name:(std::string)name object:(void *)object {
