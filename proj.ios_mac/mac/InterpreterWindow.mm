@@ -150,21 +150,23 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 	BOOL newTextHasNewline = [replacementString rangeOfString:@"\n"].location != NSNotFound;
 
 	if ((isMultiline && isCursorInLastLine) || newTextHasNewline) {
-		NSAttributedString* attributedString = [[NSAttributedString alloc] initWithString:replacementString];
-		[self.textView.textStorage appendAttributedString:attributedString];
 		dispatch_async(dispatch_get_main_queue(), ^{
 			NSRange selectedRange = self.textView.selectedRange;
 			if (selectedRange.length == 0) {
 				[self.textView scrollRangeToVisible:NSMakeRange(text.length, 0)];
 				[self.textView setSelectedRange:NSMakeRange(text.length, 0)];
 				NSString *expression = [text substringFromIndex:NSMaxRange(range)];
+				NSFont *font = [NSFont fontWithName:@"Menlo" size:11];
+				NSDictionary *attributes = [NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName];
+				NSAttributedString* attributedString = [[NSAttributedString alloc] initWithString:replacementString attributes:attributes];
+				[self.textView.textStorage appendAttributedString:attributedString];
 				_interpreter->process(expression.UTF8String);
 			} else {
 				NSString *expression = [text substringWithRange:selectedRange];
-				if (expression.length - 1 == [expression rangeOfString:@"\n" options:NSBackwardsSearch].location) {
-					selectedRange.length -= 1;
-				}
 				expression = [text substringWithRange:selectedRange];
+				if (expression.length - 1 != [expression rangeOfString:@"\n" options:NSBackwardsSearch].location) {
+					expression  = [expression stringByAppendingString:@"\n"];
+				}
 				NSFont *font = [NSFont fontWithName:@"Menlo" size:11];
 				NSDictionary *attributes = [NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName];
 				NSAttributedString* attributedString = [[NSAttributedString alloc] initWithString:expression attributes:attributes];
