@@ -7,6 +7,7 @@
 //
 
 #import "InterpreterWindow.h"
+#include <iostream>
 
 #define STR(s) #s
 
@@ -151,6 +152,13 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 
 	if ((isMultiline && isCursorInLastLine) || newTextHasNewline) {
 		dispatch_async(dispatch_get_main_queue(), ^{
+			/*
+			static char bigOutBuf[8192];
+			static char savBuf[8192];
+			
+			fflush(stdout);
+			setvbuf(stdout,bigOutBuf,_IOFBF,8192);//stdout uses your buffer
+			 */
 			NSRange selectedRange = self.textView.selectedRange;
 			NSFont *font = [NSFont fontWithName:@"Menlo" size:11];
 			NSDictionary *attributes = [NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName];
@@ -171,6 +179,19 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 				[self.textView.textStorage appendAttributedString:attributedString];
 				_interpreter->process(expression.UTF8String);
 			}
+			/*
+			std::cout << "!!!";
+
+			strncpy(savBuf,bigOutBuf,8192);
+
+			fflush(stdout);
+			setbuf(stdout,NULL);
+
+			printf(">>>%s\n", savBuf);
+
+			NSAttributedString* attributedString = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%s", savBuf] attributes:attributes];
+			[self.textView.textStorage appendAttributedString:attributedString];
+			 */
 			[self.textView setNeedsDisplay:YES];
 		});
 		return NO;
