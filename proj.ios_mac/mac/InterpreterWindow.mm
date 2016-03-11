@@ -165,7 +165,9 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 					selectedRange.length -= 1;
 				}
 				expression = [text substringWithRange:selectedRange];
-				NSAttributedString* attributedString = [[NSAttributedString alloc] initWithString:expression];
+				NSFont *font = [NSFont fontWithName:@"Menlo" size:11];
+				NSDictionary *attributes = [NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName];
+				NSAttributedString* attributedString = [[NSAttributedString alloc] initWithString:expression attributes:attributes];
 				[self.textView.textStorage appendAttributedString:attributedString];
 				_interpreter->process(expression.UTF8String);
 			}
