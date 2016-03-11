@@ -153,10 +153,23 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 		NSAttributedString* attributedString = [[NSAttributedString alloc] initWithString:replacementString];
 		[self.textView.textStorage appendAttributedString:attributedString];
 		dispatch_async(dispatch_get_main_queue(), ^{
-			[self.textView scrollRangeToVisible:NSMakeRange(text.length, 0)];
-			[self.textView setSelectedRange:NSMakeRange(text.length, 0)];
-			std::string expression = [text substringFromIndex:NSMaxRange(range)].UTF8String;
-			_interpreter->process(expression);
+			NSRange selectedRange = self.textView.selectedRange;
+			if (selectedRange.length == 0) {
+				[self.textView scrollRangeToVisible:NSMakeRange(text.length, 0)];
+				[self.textView setSelectedRange:NSMakeRange(text.length, 0)];
+				NSString *expression = [text substringFromIndex:NSMaxRange(range)];
+				_interpreter->process(expression.UTF8String);
+			} else {
+				NSString *expression = [text substringWithRange:selectedRange];
+				if (expression.length - 1 == [expression rangeOfString:@"\n" options:NSBackwardsSearch].location) {
+					selectedRange.length -= 1;
+				}
+				expression = [text substringWithRange:selectedRange];
+				NSAttributedString* attributedString = [[NSAttributedString alloc] initWithString:expression];
+				[self.textView.textStorage appendAttributedString:attributedString];
+				_interpreter->process(expression.UTF8String);
+			}
+			[self.textView setNeedsDisplay:YES];
 		});
 		return NO;
 	}
