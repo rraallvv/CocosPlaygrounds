@@ -14,20 +14,7 @@ using namespace std;
 
 enum {READ, WRITE};
 
-class IOutputRedirector
-{
-public:
-	IOutputRedirector() {}
-	virtual    ~IOutputRedirector(){}
-
-	virtual void    StartRedirecting() = 0;
-	virtual void    StopRedirecting()  = 0;
-
-	virtual std::string GetOutput()    = 0;
-	virtual void        ClearOutput()  = 0;
-};
-
-class CStdoutRedirector : public IOutputRedirector
+class CStdoutRedirector
 {
 public:
 	CStdoutRedirector();
@@ -48,8 +35,7 @@ private:
 };
 
 CStdoutRedirector::CStdoutRedirector()
-: IOutputRedirector()
-, _oldStdOut( 0 )
+: _oldStdOut( 0 )
 , _oldStdErr( 0 )
 , _redirecting( false )
 {
