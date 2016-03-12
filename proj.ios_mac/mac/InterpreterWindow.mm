@@ -334,10 +334,19 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 			}
 
 			theRedirector.StopRedirecting();
-			NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%s", theRedirector.GetOutput().c_str()]
-															   attributes:@{NSFontAttributeName: font,
-																			NSForegroundColorAttributeName: [NSColor grayColor]}];
+			NSString *expression = [NSString stringWithFormat:@"%s", theRedirector.GetOutput().c_str()];
+			if (expression.length - 1 == [expression rangeOfString:@"\n" options:NSBackwardsSearch].location) {
+				expression = [expression substringToIndex:[expression length] - 1];
+			}
+			NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:expression
+																				   attributes:@{NSFontAttributeName: font,
+																								NSForegroundColorAttributeName: [NSColor grayColor]}];
 			theRedirector.ClearOutput();
+			[self.textView.textStorage appendAttributedString:attributedString];
+
+			attributedString = [[NSAttributedString alloc] initWithString:@"\n"
+															   attributes:@{NSFontAttributeName: font,
+																			NSForegroundColorAttributeName: [NSColor blackColor]}];
 
 			[self.textView.textStorage appendAttributedString:attributedString];
 
