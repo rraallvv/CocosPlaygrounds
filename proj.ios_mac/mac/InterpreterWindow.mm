@@ -285,8 +285,20 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 	__block NSRange range = [text rangeOfString:@"\n" options:NSBackwardsSearch];
 
 	//BOOL isMultiline = range.location != NSNotFound;
-	//BOOL isCursorInLastLine = range.location < affectedCharRange.location;
+	BOOL isCursorInLastLine = range.location < affectedCharRange.location;
 	BOOL newTextHasNewline = [replacementString rangeOfString:@"\n"].location != NSNotFound;
+
+	if (!isCursorInLastLine) {
+		self.textView.selectedRange = NSMakeRange(text.length, 0);
+		[self.textView scrollRangeToVisible: NSMakeRange(self.textView.string.length, 0)];
+		[self.textView setNeedsDisplay:YES];
+
+		NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:replacementString
+																			   attributes:@{NSFontAttributeName: _font}];
+		[self.textView.textStorage appendAttributedString:attributedString];
+		
+		return NO;
+	}
 
 	if (/*(isMultiline && isCursorInLastLine) ||*/ newTextHasNewline) {
 		dispatch_async(dispatch_get_main_queue(), ^{
