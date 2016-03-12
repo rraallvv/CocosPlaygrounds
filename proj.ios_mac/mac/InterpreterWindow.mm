@@ -327,7 +327,7 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 			break;
 
 		case APPEND_SELECTION:
-			[self appendString:[text substringWithRange:selectedRange] attributes:attributes];
+			[self appendString:[self stringByRemovingLastNewline:[text substringWithRange:selectedRange]] attributes:attributes];
 			break;
 
 		case REPLACE_SELECTION:
@@ -418,7 +418,7 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 	_interpreter->process(buff);
 }
 
-- (NSString *)stringByRemovingNewline:(NSString *)string {
+- (NSString *)stringByRemovingLastNewline:(NSString *)string {
 	if (string.length - 1 == [string rangeOfString:@"\n" options:NSBackwardsSearch].location) {
 		string = [string substringToIndex:string.length - 1];
 	}
