@@ -283,31 +283,26 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 - (BOOL)textView:(NSTextView *)aTextView shouldChangeTextInRange:(NSRange)affectedCharRange replacementString:(NSString *)replacementString {
 	__block NSString *text = self.textView.string;
 	__block NSRange range = [text rangeOfString:@"\n" options:NSBackwardsSearch];
+	__block NSString *replacement = replacementString.copy;
 
 	//BOOL isMultiline = range.location != NSNotFound;
 	BOOL isCursorInLastLine = range.location < affectedCharRange.location;
 	BOOL newTextHasNewline = [replacementString rangeOfString:@"\n"].location != NSNotFound;
 
-	if (!isCursorInLastLine) {
-		self.textView.selectedRange = NSMakeRange(text.length, 0);
-		[self.textView scrollRangeToVisible: NSMakeRange(self.textView.string.length, 0)];
-		[self.textView setNeedsDisplay:YES];
-
-		NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:replacementString
-																			   attributes:@{NSFontAttributeName: _font}];
-		[self.textView.textStorage appendAttributedString:attributedString];
-		
-		return NO;
-	}
-
-	if (/*(isMultiline && isCursorInLastLine) ||*/ newTextHasNewline) {
+	if (/*(isMultiline && isCursorInLastLine) ||*/ !isCursorInLastLine || newTextHasNewline) {
 		dispatch_async(dispatch_get_main_queue(), ^{
 			NSRange selectedRange = self.textView.selectedRange;
 
 			if (selectedRange.length == 0) {
-				[self.textView scrollRangeToVisible:NSMakeRange(text.length, 0)];
-				[self.textView setSelectedRange:NSMakeRange(text.length, 0)];
+				[self appendString:replacement attributes:@{NSFontAttributeName: _font}];
+			} else {
+				NSString *expression = [text substringWithRange:selectedRange];
+				expression = [text substringWithRange:selectedRange];
+				expression = [self stringByRemovingNewline:expression];
+				[self appendString:expression attributes:@{NSFontAttributeName: _font}];
+			}
 
+			/*
 				NSString *expression = [text substringFromIndex:NSMaxRange(range)];
 
 				NSString *result = [NSString stringWithFormat:@"%@", [self processExpression:expression]];
@@ -315,9 +310,9 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 				if (result.length - 1 == [result rangeOfString:@"\n" options:NSBackwardsSearch].location) {
 					result = [result substringToIndex:[result length] - 1];
 				}
-				NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:result
-																					   attributes:@{NSFontAttributeName: _font,
-																									NSForegroundColorAttributeName: [NSColor grayColor]}];
+				attributedString = [[NSAttributedString alloc] initWithString:result
+																   attributes:@{NSFontAttributeName: _font,
+																				NSForegroundColorAttributeName: [NSColor grayColor]}];
 				[self.textView.textStorage appendAttributedString:attributedString];
 
 				attributedString = [[NSAttributedString alloc] initWithString:@"\n"
@@ -325,18 +320,7 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 																				NSForegroundColorAttributeName: [NSColor blackColor]}];
 
 				[self.textView.textStorage appendAttributedString:attributedString];
-
-			} else {
-				NSString *expression = [text substringWithRange:selectedRange];
-				expression = [text substringWithRange:selectedRange];
-				if (expression.length - 1 == [expression rangeOfString:@"\n" options:NSBackwardsSearch].location) {
-					expression = [expression substringToIndex:[expression length] - 1];
-				}
-				NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:expression
-																					   attributes:@{NSFontAttributeName: _font}];
-
-				[self.textView.textStorage appendAttributedString:attributedString];
-			}
+			 */
 
 			// Scroll to the bottom
 			self.textView.selectedRange = NSMakeRange(text.length, 0);
@@ -381,6 +365,19 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 	snprintf(buff, sizeof(buff), "%s %s=%cstatic_cast<%s*>((void*)%p);", typeName.c_str(), name.c_str(), exportAsPointer ? ' ' : '*', rawType.c_str(), object);
 	
 	_interpreter->process(buff);
+}
+
+- (NSString *)stringByRemovingNewline:(NSString *)string {
+	if (string.length - 1 == [string rangeOfString:@"\n" options:NSBackwardsSearch].location) {
+		string = [string substringToIndex:string.length - 1];
+	}
+	return string;
+}
+
+- (void)appendString:(NSString *)string attributes:(NSDictionary *)attributes {
+	NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:string
+																		   attributes:attributes];
+	[self.textView.textStorage appendAttributedString:attributedString];
 }
 
 @end
