@@ -326,13 +326,13 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 				}
 				NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:expression
 																					   attributes:@{NSFontAttributeName: _font}];
+
 				[self.textView.textStorage appendAttributedString:attributedString];
-				//_interpreter->process(expression.UTF8String);
-				self.textView.selectedRange = NSMakeRange(text.length, 0);
 			}
 
+			// Scroll to the bottom
+			self.textView.selectedRange = NSMakeRange(text.length, 0);
 			[self.textView scrollRangeToVisible: NSMakeRange(self.textView.string.length, 0)];
-
 			[self.textView setNeedsDisplay:YES];
 		});
 		return NO;
