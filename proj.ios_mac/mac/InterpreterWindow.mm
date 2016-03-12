@@ -293,23 +293,19 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 			NSRange selectedRange = self.textView.selectedRange;
 
 			if (selectedRange.length == 0) {
-				CStdoutRedirector theRedirector;
-				theRedirector.StartRedirecting();
-
 				[self.textView scrollRangeToVisible:NSMakeRange(text.length, 0)];
 				[self.textView setSelectedRange:NSMakeRange(text.length, 0)];
-				NSString *expression = [text substringFromIndex:NSMaxRange(range)];
-				_interpreter->process(expression.UTF8String);
 
-				theRedirector.StopRedirecting();
-				expression = [NSString stringWithFormat:@"\n%s", theRedirector.GetOutput().c_str()];
-				if (expression.length - 1 == [expression rangeOfString:@"\n" options:NSBackwardsSearch].location) {
-					expression = [expression substringToIndex:[expression length] - 1];
+				NSString *expression = [text substringFromIndex:NSMaxRange(range)];
+
+				NSString *result = [NSString stringWithFormat:@"%@", [self processExpression:expression]];
+
+				if (result.length - 1 == [result rangeOfString:@"\n" options:NSBackwardsSearch].location) {
+					result = [result substringToIndex:[result length] - 1];
 				}
-				NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:expression
+				NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:result
 																					   attributes:@{NSFontAttributeName: _font,
 																									NSForegroundColorAttributeName: [NSColor grayColor]}];
-				theRedirector.ClearOutput();
 				[self.textView.textStorage appendAttributedString:attributedString];
 
 				attributedString = [[NSAttributedString alloc] initWithString:@"\n"
@@ -338,6 +334,22 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 		return NO;
 	}
 	return YES;
+}
+
+- (NSString *)processExpression:(NSString *)expression {
+	CStdoutRedirector theRedirector;
+
+	theRedirector.StartRedirecting();
+
+	_interpreter->process(expression.UTF8String);
+
+	theRedirector.StopRedirecting();
+
+	NSString *result = [NSString stringWithFormat:@"\n%s", theRedirector.GetOutput().c_str()];
+
+	theRedirector.ClearOutput();
+
+	return result;
 }
 
 - (void)exportToInterpreter:(const std::string)typeName name:(std::string)name object:(void *)object {
