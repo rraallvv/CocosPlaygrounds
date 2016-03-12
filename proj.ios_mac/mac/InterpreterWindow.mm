@@ -166,10 +166,11 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 @implementation InterpreterWindow
 
 -(void)awakeFromNib {
-	self.textView.font = [NSFont fontWithName:@"Menlo" size:11];
 	self.textView.continuousSpellCheckingEnabled = NO;
 	self.textView.automaticQuoteSubstitutionEnabled = NO;
 	self.textView.enabledTextCheckingTypes = 0;
+	_font = [NSFont fontWithName:@"Menlo" size:11];
+	self.textView.typingAttributes = @{NSFontAttributeName: _font};
 
 	_interpreter = new cling::Interpreter(argc, argv, llvmdir);
 
@@ -286,8 +287,6 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 	if ((isMultiline && isCursorInLastLine) || newTextHasNewline) {
 		dispatch_async(dispatch_get_main_queue(), ^{
 			NSRange selectedRange = self.textView.selectedRange;
-			NSFont *font = [NSFont fontWithName:@"Menlo" size:11];
-			NSDictionary *attributes = [NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName];
 
 			if (selectedRange.length == 0) {
 				CStdoutRedirector theRedirector;
@@ -304,24 +303,25 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 					expression = [expression substringToIndex:[expression length] - 1];
 				}
 				NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:expression
-																   attributes:@{NSFontAttributeName: font,
-																				NSForegroundColorAttributeName: [NSColor grayColor]}];
+																					   attributes:@{NSFontAttributeName: _font,
+																									NSForegroundColorAttributeName: [NSColor grayColor]}];
 				theRedirector.ClearOutput();
 				[self.textView.textStorage appendAttributedString:attributedString];
 
 				attributedString = [[NSAttributedString alloc] initWithString:@"\n"
-																   attributes:@{NSFontAttributeName: font,
+																   attributes:@{NSFontAttributeName: _font,
 																				NSForegroundColorAttributeName: [NSColor blackColor]}];
 
 				[self.textView.textStorage appendAttributedString:attributedString];
-				
+
 			} else {
 				NSString *expression = [text substringWithRange:selectedRange];
 				expression = [text substringWithRange:selectedRange];
 				if (expression.length - 1 == [expression rangeOfString:@"\n" options:NSBackwardsSearch].location) {
 					expression = [expression substringToIndex:[expression length] - 1];
 				}
-				NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:expression attributes:attributes];
+				NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:expression
+																					   attributes:@{NSFontAttributeName: _font}];
 				[self.textView.textStorage appendAttributedString:attributedString];
 				//_interpreter->process(expression.UTF8String);
 				self.textView.selectedRange = NSMakeRange(text.length, 0);
@@ -349,7 +349,7 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 	//or
 	//Type* qling=static_cast<Type*>((void*)47315771);"
 	snprintf(buff, sizeof(buff), "%s %s=%cstatic_cast<%s*>((void*)%p);", typeName.c_str(), name.c_str(), exportAsPointer ? ' ' : '*', rawType.c_str(), object);
-
+	
 	_interpreter->process(buff);
 }
 

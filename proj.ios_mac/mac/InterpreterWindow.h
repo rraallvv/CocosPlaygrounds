@@ -11,6 +11,7 @@
 
 @interface InterpreterWindow : NSWindow <NSTextViewDelegate> {
 	cling::Interpreter *_interpreter;
+	NSFont *_font;
 }
 
 @property (nonatomic, strong) IBOutlet NSTextView *textView;
