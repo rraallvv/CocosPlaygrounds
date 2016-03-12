@@ -240,7 +240,9 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 
 						NSInteger length = [[text substringFromIndex:start + 1] rangeOfString:@"\n"].location;
 
-						self.textView.selectedRange = NSMakeRange(start + 1, length + 1);
+						NSRange selectedRange = NSMakeRange(start + 1, length + 1);
+						self.textView.selectedRange = selectedRange;
+						[self.textView scrollRangeToVisible:selectedRange];
 					});
 				}
 					break;
@@ -261,7 +263,9 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 
 						NSInteger length = [[text substringFromIndex:start + 1] rangeOfString:@"\n"].location;
 
-						self.textView.selectedRange = NSMakeRange(start + 1, length + 1);
+						NSRange selectedRange = NSMakeRange(start + 1, length + 1);
+						self.textView.selectedRange = selectedRange;
+						[self.textView scrollRangeToVisible:selectedRange];
 					});
 				}
 					break;
