@@ -297,16 +297,14 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 				[self.textView scrollRangeToVisible:NSMakeRange(text.length, 0)];
 				[self.textView setSelectedRange:NSMakeRange(text.length, 0)];
 				NSString *expression = [text substringFromIndex:NSMaxRange(range)];
-				NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:replacementString attributes:attributes];
-				[self.textView.textStorage appendAttributedString:attributedString];
 				_interpreter->process(expression.UTF8String);
 
 				theRedirector.StopRedirecting();
-				expression = [NSString stringWithFormat:@"%s", theRedirector.GetOutput().c_str()];
+				expression = [NSString stringWithFormat:@"\n%s", theRedirector.GetOutput().c_str()];
 				if (expression.length - 1 == [expression rangeOfString:@"\n" options:NSBackwardsSearch].location) {
 					expression = [expression substringToIndex:[expression length] - 1];
 				}
-				attributedString = [[NSAttributedString alloc] initWithString:expression
+				NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:expression
 																   attributes:@{NSFontAttributeName: font,
 																				NSForegroundColorAttributeName: [NSColor grayColor]}];
 				theRedirector.ClearOutput();
