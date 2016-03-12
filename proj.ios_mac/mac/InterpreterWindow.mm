@@ -297,10 +297,10 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 			NSFont *font = [NSFont fontWithName:@"Menlo" size:11];
 			NSDictionary *attributes = [NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName];
 
-			CStdoutRedirector theRedirector;
-			theRedirector.StartRedirecting();
-
 			if (selectedRange.length == 0) {
+				CStdoutRedirector theRedirector;
+				theRedirector.StartRedirecting();
+
 				[self.textView scrollRangeToVisible:NSMakeRange(text.length, 0)];
 				[self.textView setSelectedRange:NSMakeRange(text.length, 0)];
 				NSString *expression = [text substringFromIndex:NSMaxRange(range)];
@@ -308,33 +308,34 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 				[self.textView.textStorage appendAttributedString:attributedString];
 				_interpreter->process(expression.UTF8String);
 
+				theRedirector.StopRedirecting();
+				expression = [NSString stringWithFormat:@"%s", theRedirector.GetOutput().c_str()];
+				if (expression.length - 1 == [expression rangeOfString:@"\n" options:NSBackwardsSearch].location) {
+					expression = [expression substringToIndex:[expression length] - 1];
+				}
+				attributedString = [[NSAttributedString alloc] initWithString:expression
+																   attributes:@{NSFontAttributeName: font,
+																				NSForegroundColorAttributeName: [NSColor grayColor]}];
+				theRedirector.ClearOutput();
+				[self.textView.textStorage appendAttributedString:attributedString];
+
+				attributedString = [[NSAttributedString alloc] initWithString:@"\n"
+																   attributes:@{NSFontAttributeName: font,
+																				NSForegroundColorAttributeName: [NSColor blackColor]}];
+
+				[self.textView.textStorage appendAttributedString:attributedString];
+				
 			} else {
 				NSString *expression = [text substringWithRange:selectedRange];
 				expression = [text substringWithRange:selectedRange];
-				if (expression.length - 1 != [expression rangeOfString:@"\n" options:NSBackwardsSearch].location) {
-					expression  = [expression stringByAppendingString:@"\n"];
+				if (expression.length - 1 == [expression rangeOfString:@"\n" options:NSBackwardsSearch].location) {
+					expression = [expression substringToIndex:[expression length] - 1];
 				}
 				NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:expression attributes:attributes];
 				[self.textView.textStorage appendAttributedString:attributedString];
-				_interpreter->process(expression.UTF8String);
+				//_interpreter->process(expression.UTF8String);
+				self.textView.selectedRange = NSMakeRange(text.length, 0);
 			}
-
-			theRedirector.StopRedirecting();
-			NSString *expression = [NSString stringWithFormat:@"%s", theRedirector.GetOutput().c_str()];
-			if (expression.length - 1 == [expression rangeOfString:@"\n" options:NSBackwardsSearch].location) {
-				expression = [expression substringToIndex:[expression length] - 1];
-			}
-			NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:expression
-																				   attributes:@{NSFontAttributeName: font,
-																								NSForegroundColorAttributeName: [NSColor grayColor]}];
-			theRedirector.ClearOutput();
-			[self.textView.textStorage appendAttributedString:attributedString];
-
-			attributedString = [[NSAttributedString alloc] initWithString:@"\n"
-															   attributes:@{NSFontAttributeName: font,
-																			NSForegroundColorAttributeName: [NSColor blackColor]}];
-
-			[self.textView.textStorage appendAttributedString:attributedString];
 
 			[self.textView setNeedsDisplay:YES];
 		});
