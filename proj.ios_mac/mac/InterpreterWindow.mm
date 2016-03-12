@@ -8,6 +8,123 @@
 
 #import "InterpreterWindow.h"
 #include <iostream>
+#include <fcntl.h>
+
+using namespace std;
+
+enum {READ, WRITE};
+
+class IOutputRedirector
+{
+public:
+	IOutputRedirector() {}
+	virtual    ~IOutputRedirector(){}
+
+	virtual void    StartRedirecting() = 0;
+	virtual void    StopRedirecting()  = 0;
+
+	virtual std::string GetOutput()    = 0;
+	virtual void        ClearOutput()  = 0;
+};
+
+class CStdoutRedirector : public IOutputRedirector
+{
+public:
+	CStdoutRedirector();
+	virtual ~CStdoutRedirector();
+
+	virtual void StartRedirecting();
+	virtual void StopRedirecting();
+
+	virtual std::string GetOutput();
+	virtual void        ClearOutput();
+
+private:
+	int    _pipe[2];
+	int    _oldStdOut;
+	int    _oldStdErr;
+	bool   _redirecting;
+	std::string _redirectedOutput;
+};
+
+CStdoutRedirector::CStdoutRedirector()
+: IOutputRedirector()
+, _oldStdOut( 0 )
+, _oldStdErr( 0 )
+, _redirecting( false )
+{
+	_pipe[READ] = 0;
+	_pipe[WRITE] = 0;
+	if( pipe( _pipe ) != -1 ) {
+		_oldStdOut = dup( fileno(stdout) );
+		_oldStdErr = dup( fileno(stderr) );
+	}
+
+	setbuf( stdout, NULL );
+	setbuf( stderr, NULL );
+}
+
+CStdoutRedirector::~CStdoutRedirector()
+{
+	if( _redirecting ) {
+		StopRedirecting();
+	}
+
+	if( _oldStdOut > 0 ) {
+		close( _oldStdOut );
+	}
+	if( _oldStdErr > 0 ) {
+		close( _oldStdErr );
+	}
+	if( _pipe[READ] > 0 ) {
+		close( _pipe[READ] );
+	}
+	if( _pipe[WRITE] > 0 ) {
+		close( _pipe[WRITE] );
+	}
+}
+
+void
+CStdoutRedirector::StartRedirecting()
+{
+	if( _redirecting ) return;
+
+	dup2( _pipe[WRITE], fileno(stdout) );
+	dup2( _pipe[WRITE], fileno(stderr) );
+	_redirecting = true;
+}
+
+void
+CStdoutRedirector::StopRedirecting()
+{
+	if( !_redirecting ) return;
+
+	dup2( _oldStdOut, fileno(stdout) );
+	dup2( _oldStdErr, fileno(stderr) );
+	_redirecting = false;
+}
+
+string
+CStdoutRedirector::GetOutput()
+{
+	const size_t bufSize = 4096;
+	char buf[bufSize];
+	fcntl( _pipe[READ], F_SETFL, O_NONBLOCK );
+	ssize_t bytesRead = read( _pipe[READ], buf, bufSize - 1 );
+	while( bytesRead > 0 ) {
+		buf[bytesRead] = 0;
+		_redirectedOutput += buf;
+		bytesRead = read( _pipe[READ], buf, bufSize );
+	}
+
+	return _redirectedOutput;
+}
+
+void
+CStdoutRedirector::ClearOutput()
+{
+	_redirectedOutput.clear();
+}
 
 #define STR(s) #s
 
@@ -199,9 +316,17 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 				NSString *expression = [text substringFromIndex:NSMaxRange(range)];
 				NSAttributedString* attributedString = [[NSAttributedString alloc] initWithString:replacementString attributes:attributes];
 				[self.textView.textStorage appendAttributedString:attributedString];
-				startCapturing();
+
+				CStdoutRedirector theRedirector;
+				theRedirector.StartRedirecting();
+
 				_interpreter->process(expression.UTF8String);
-				stopCapturing();
+
+				theRedirector.StopRedirecting();
+
+				attributedString = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%s", theRedirector.GetOutput().c_str()] attributes:attributes];
+				[self.textView.textStorage appendAttributedString:attributedString];
+
 			} else {
 				NSString *expression = [text substringWithRange:selectedRange];
 				expression = [text substringWithRange:selectedRange];
