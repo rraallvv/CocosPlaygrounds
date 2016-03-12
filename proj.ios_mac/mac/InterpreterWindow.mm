@@ -282,12 +282,12 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 
 - (BOOL)textView:(NSTextView *)aTextView shouldChangeTextInRange:(NSRange)affectedCharRange replacementString:(NSString *)replacementString {
 	NSString *text = self.textView.string;
-	NSInteger commandLinePosition = [text rangeOfString:@"\n" options:NSBackwardsSearch].location;
+	NSInteger commandLinePosition = [text rangeOfString:@"\n" options:NSBackwardsSearch].location + 1;
 	NSString *replacement = replacementString.copy;
 	NSRange selectedRange = self.textView.selectedRange;
 
 	//BOOL isMultiline = range.location != NSNotFound;
-	BOOL inCommandLine = commandLinePosition < affectedCharRange.location;
+	BOOL inCommandLine = commandLinePosition <= affectedCharRange.location;
 	BOOL hasNewline = [replacementString rangeOfString:@"\n"].location != NSNotFound;
 	BOOL hasSelection = selectedRange.length > 0;
 
@@ -337,6 +337,9 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 		default: //PASS_THROUGH
 			break;
 	}
+
+	NSString *expression = [self.textView.string substringFromIndex:commandLinePosition];
+	NSLog(@"\n>%@|\n", expression);
 
 #if 0
 	dispatch_async(dispatch_get_main_queue(), ^{
