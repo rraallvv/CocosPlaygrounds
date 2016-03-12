@@ -233,7 +233,7 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 					__block NSInteger currentPosition =  self.textView.selectedRange.location;
 					dispatch_async(dispatch_get_main_queue(), ^{
 						NSString *text = self.textView.string;
-						if (currentPosition <= 0) currentPosition = text.length;
+						if (currentPosition <= 0) currentPosition = text.length + 1;
 
 						NSInteger start = [text rangeOfString:@"\n" options:NSBackwardsSearch range:NSMakeRange(0, currentPosition - 1)].location;
 						if (start == NSNotFound) start = -1;
