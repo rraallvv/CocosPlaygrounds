@@ -181,13 +181,6 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 	_interpreter->process(STR(using namespace cocos2d;));
 	_interpreter->process(STR(cout << "Hello World!" << endl;));
 
-	std::string s = "exported string";
-
-	[self exportToInterpreter:"string" name:"s" object:&s];
-	[self exportToInterpreter:"string *" name:"ps" object:&s];
-	_interpreter->process(STR(cout << s << endl;));
-	_interpreter->process(STR(cout << *ps << endl;));
-
 	std::string expression =
 	"/************ CocosPlaygrounds *************\n"
 	" * Type C++ code and press enter to run it *\n"
