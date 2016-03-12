@@ -354,6 +354,11 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 		}
 	}
 
+	// Scroll to the bottom
+	self.textView.selectedRange = NSMakeRange(self.textView.string.length, 0);
+	[self.textView scrollRangeToVisible: NSMakeRange(self.textView.string.length, 0)];
+	[self.textView setNeedsDisplay:YES];
+
 #if 0
 	dispatch_async(dispatch_get_main_queue(), ^{
 		NSString *expression = nil;
