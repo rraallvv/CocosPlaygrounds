@@ -293,14 +293,15 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 		dispatch_async(dispatch_get_main_queue(), ^{
 			NSRange selectedRange = self.textView.selectedRange;
 
+			NSString *expression = nil;
+
 			if (selectedRange.length == 0) {
-				[self appendString:replacement attributes:@{NSFontAttributeName: _font}];
+				expression = replacement;
 			} else {
-				NSString *expression = [text substringWithRange:selectedRange];
-				expression = [text substringWithRange:selectedRange];
-				expression = [self stringByRemovingNewline:expression];
-				[self appendString:expression attributes:@{NSFontAttributeName: _font}];
+				expression = [self stringByRemovingNewline:[text substringWithRange:selectedRange]];
 			}
+
+			[self appendString:expression attributes:@{NSFontAttributeName: _font}];
 
 			/*
 				NSString *expression = [text substringFromIndex:NSMaxRange(range)];
