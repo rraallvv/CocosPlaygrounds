@@ -310,22 +310,17 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 			NSRange selectedRange = self.textView.selectedRange;
 			NSFont *font = [NSFont fontWithName:@"Menlo" size:11];
 			NSDictionary *attributes = [NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName];
+
+			CStdoutRedirector theRedirector;
+			theRedirector.StartRedirecting();
+
 			if (selectedRange.length == 0) {
 				[self.textView scrollRangeToVisible:NSMakeRange(text.length, 0)];
 				[self.textView setSelectedRange:NSMakeRange(text.length, 0)];
 				NSString *expression = [text substringFromIndex:NSMaxRange(range)];
-				NSAttributedString* attributedString = [[NSAttributedString alloc] initWithString:replacementString attributes:attributes];
+				NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:replacementString attributes:attributes];
 				[self.textView.textStorage appendAttributedString:attributedString];
-
-				CStdoutRedirector theRedirector;
-				theRedirector.StartRedirecting();
-
 				_interpreter->process(expression.UTF8String);
-
-				theRedirector.StopRedirecting();
-
-				attributedString = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%s", theRedirector.GetOutput().c_str()] attributes:attributes];
-				[self.textView.textStorage appendAttributedString:attributedString];
 
 			} else {
 				NSString *expression = [text substringWithRange:selectedRange];
@@ -333,14 +328,18 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 				if (expression.length - 1 != [expression rangeOfString:@"\n" options:NSBackwardsSearch].location) {
 					expression  = [expression stringByAppendingString:@"\n"];
 				}
-				NSAttributedString* attributedString = [[NSAttributedString alloc] initWithString:expression attributes:attributes];
+				NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:expression attributes:attributes];
 				[self.textView.textStorage appendAttributedString:attributedString];
 				_interpreter->process(expression.UTF8String);
 			}
-			/*
-			NSAttributedString* attributedString = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%s", getCaptured().c_str()] attributes:attributes];
+
+			theRedirector.StopRedirecting();
+			NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%s", theRedirector.GetOutput().c_str()]
+															   attributes:@{NSFontAttributeName: font,
+																			NSForegroundColorAttributeName: [NSColor grayColor]}];
+			theRedirector.ClearOutput();
+
 			[self.textView.textStorage appendAttributedString:attributedString];
-			 */
 
 			[self.textView setNeedsDisplay:YES];
 		});
