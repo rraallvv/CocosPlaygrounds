@@ -340,10 +340,17 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 
 	NSArray *expressions = [[self.textView.string substringFromIndex:commandLinePosition] componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
 
+	[self.textView.textStorage replaceCharactersInRange:NSMakeRange(commandLinePosition, self.textView.string.length - commandLinePosition) withString:@""];
+
+	NSDictionary *resultAttributes = @{NSFontAttributeName: _font,
+									   NSForegroundColorAttributeName: [NSColor grayColor]};
+
 	for (NSInteger i = 0; i < expressions.count; i++) {
 		NSString *expression = expressions[i];
+		[self appendString:expression attributes:attributes];
 		if (expression.length > 0 && i < expressions.count - 1) {
-			NSLog(@">%@|", expression);
+			NSString *result = [self processExpression:expression];
+			[self appendString:result attributes:resultAttributes];
 		}
 	}
 
@@ -359,25 +366,23 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 
 		[self appendString:expression attributes:@{NSFontAttributeName: _font}];
 
-		/*
-		 NSString *expression = [text substringFromIndex:NSMaxRange(range)];
+		NSString *expression = [text substringFromIndex:NSMaxRange(range)];
 
-		 NSString *result = [NSString stringWithFormat:@"%@", [self processExpression:expression]];
+		NSString *result = [NSString stringWithFormat:@"%@", [self processExpression:expression]];
 
-		 if (result.length - 1 == [result rangeOfString:@"\n" options:NSBackwardsSearch].location) {
-		 result = [result substringToIndex:[result length] - 1];
-		 }
-		 attributedString = [[NSAttributedString alloc] initWithString:result
-		 attributes:@{NSFontAttributeName: _font,
-		 NSForegroundColorAttributeName: [NSColor grayColor]}];
-		 [self.textView.textStorage appendAttributedString:attributedString];
+		if (result.length - 1 == [result rangeOfString:@"\n" options:NSBackwardsSearch].location) {
+			result = [result substringToIndex:[result length] - 1];
+		}
+		attributedString = [[NSAttributedString alloc] initWithString:result
+														   attributes:@{NSFontAttributeName: _font,
+																		NSForegroundColorAttributeName: [NSColor grayColor]}];
+		[self.textView.textStorage appendAttributedString:attributedString];
 
-		 attributedString = [[NSAttributedString alloc] initWithString:@"\n"
-		 attributes:@{NSFontAttributeName: _font,
-		 NSForegroundColorAttributeName: [NSColor blackColor]}];
+		attributedString = [[NSAttributedString alloc] initWithString:@"\n"
+														   attributes:@{NSFontAttributeName: _font,
+																		NSForegroundColorAttributeName: [NSColor blackColor]}];
 
-		 [self.textView.textStorage appendAttributedString:attributedString];
-		 */
+		[self.textView.textStorage appendAttributedString:attributedString];
 
 		// Scroll to the bottom
 		self.textView.selectedRange = NSMakeRange(text.length, 0);
