@@ -266,7 +266,6 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 					break;
 				case 124:       // right arrow
 				case 123:       // left arrow
-					NSLog(@"Arrow key pressed!");
 					break;
 				default:
 					break;
