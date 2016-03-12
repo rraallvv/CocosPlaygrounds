@@ -338,8 +338,14 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 			break;
 	}
 
-	NSString *expression = [self.textView.string substringFromIndex:commandLinePosition];
-	NSLog(@"\n>%@|\n", expression);
+	NSArray *expressions = [[self.textView.string substringFromIndex:commandLinePosition] componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
+
+	for (NSInteger i = 0; i < expressions.count; i++) {
+		NSString *expression = expressions[i];
+		if (expression.length > 0 && i < expressions.count - 1) {
+			NSLog(@">%@|", expression);
+		}
+	}
 
 #if 0
 	dispatch_async(dispatch_get_main_queue(), ^{
