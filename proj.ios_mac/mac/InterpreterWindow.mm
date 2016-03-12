@@ -11,6 +11,44 @@
 
 #define STR(s) #s
 
+#define MAX_LEN 8192
+char buffer[MAX_LEN+1] = {0};
+int out_pipe[2];
+int saved_stdout;
+bool capturing = false;
+
+bool startCapturing() {
+	saved_stdout = dup(STDOUT_FILENO);  /* save stdout for display later */
+
+	if( pipe(out_pipe) != 0 ) {          /* make a pipe */
+		return false;
+	}
+
+	dup2(out_pipe[1], STDOUT_FILENO);   /* redirect stdout to the pipe */
+	close(out_pipe[1]);
+	capturing = true;
+
+	return true;
+}
+
+void stopCapturing() {
+	if (!capturing) {
+		return;
+	}
+
+	fflush(stdout);
+
+	read(out_pipe[0], buffer, MAX_LEN); /* read from pipe into buffer */
+
+	dup2(saved_stdout, STDOUT_FILENO);  /* reconnect stdout for testing */
+
+	capturing = false;
+}
+
+std::string getCaptured() {
+	return buffer;
+}
+
 static const int argc = 10;
 static const char *argv[argc] = {
 	"/usr/local/opt/root/etc",
@@ -152,13 +190,6 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 
 	if ((isMultiline && isCursorInLastLine) || newTextHasNewline) {
 		dispatch_async(dispatch_get_main_queue(), ^{
-			/*
-			static char bigOutBuf[8192];
-			static char savBuf[8192];
-			
-			fflush(stdout);
-			setvbuf(stdout,bigOutBuf,_IOFBF,8192);//stdout uses your buffer
-			 */
 			NSRange selectedRange = self.textView.selectedRange;
 			NSFont *font = [NSFont fontWithName:@"Menlo" size:11];
 			NSDictionary *attributes = [NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName];
@@ -168,7 +199,9 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 				NSString *expression = [text substringFromIndex:NSMaxRange(range)];
 				NSAttributedString* attributedString = [[NSAttributedString alloc] initWithString:replacementString attributes:attributes];
 				[self.textView.textStorage appendAttributedString:attributedString];
+				startCapturing();
 				_interpreter->process(expression.UTF8String);
+				stopCapturing();
 			} else {
 				NSString *expression = [text substringWithRange:selectedRange];
 				expression = [text substringWithRange:selectedRange];
@@ -180,18 +213,10 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 				_interpreter->process(expression.UTF8String);
 			}
 			/*
-			std::cout << "!!!";
-
-			strncpy(savBuf,bigOutBuf,8192);
-
-			fflush(stdout);
-			setbuf(stdout,NULL);
-
-			printf(">>>%s\n", savBuf);
-
-			NSAttributedString* attributedString = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%s", savBuf] attributes:attributes];
+			NSAttributedString* attributedString = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%s", getCaptured().c_str()] attributes:attributes];
 			[self.textView.textStorage appendAttributedString:attributedString];
 			 */
+
 			[self.textView setNeedsDisplay:YES];
 		});
 		return NO;
