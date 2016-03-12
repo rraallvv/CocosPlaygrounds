@@ -327,6 +327,8 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 				self.textView.selectedRange = NSMakeRange(text.length, 0);
 			}
 
+			[self.textView scrollRangeToVisible: NSMakeRange(self.textView.string.length, 0)];
+
 			[self.textView setNeedsDisplay:YES];
 		});
 		return NO;
