@@ -230,7 +230,16 @@ enum {READ, WRITE};
 	NSDictionary *attributes = @{NSFontAttributeName: _font};
 
 	if (state == PASS_THROUGH) {
-		return YES;
+		if (hasSelection) {
+			if (inCommandLine) {
+				[self.textView.textStorage replaceCharactersInRange:selectedRange withString:replacement];
+			} else {
+				[self appendString:[self stringByRemovingLastNewline:replacement] attributes:attributes];
+			}
+			return NO;
+		} else {
+			return YES;
+		}
 	}
 
 	switch (state) {
