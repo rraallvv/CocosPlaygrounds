@@ -89,27 +89,44 @@ enum {READ, WRITE};
 	if ([event type] == NSKeyDown) {
 		if (([event modifierFlags] & NSDeviceIndependentModifierFlagsMask) == NSCommandKeyMask) {
 			if ([[event charactersIgnoringModifiers] caseInsensitiveCompare:@"x"] == NSOrderedSame) {
+				// Cut
 				if ([NSApp sendAction:@selector(cut:) to:nil from:self])
 					return;
 
 			} else if ([[event charactersIgnoringModifiers] caseInsensitiveCompare:@"c"] == NSOrderedSame) {
+				// Copy
 				if ([NSApp sendAction:@selector(copy:) to:nil from:self])
 					return;
 
 			} else if ([[event charactersIgnoringModifiers] caseInsensitiveCompare:@"v"] == NSOrderedSame) {
-				if ([NSApp sendAction:@selector(paste:) to:nil from:self])
-					return;
+				// Paste only the source code
+				NSPasteboard *pasteBoard = [NSPasteboard generalPasteboard];
+				NSArray *classes = [[NSArray alloc] initWithObjects:[NSAttributedString class], nil];
+				NSArray *items = [pasteBoard readObjectsForClasses:classes options:@{}];
+				NSMutableAttributedString *string = [[items lastObject] mutableCopy];
+
+				[string enumerateAttribute:NSForegroundColorAttributeName inRange:NSMakeRange(0, string.length) options:0 usingBlock:^(id value, NSRange range, BOOL *stop) {
+					if (value) {
+						[string replaceCharactersInRange:range withString:@"\n"];
+					}
+				}];
+
+				[self textView:self.textView shouldChangeTextInRange:NSMakeRange(self.textView.string.length, 0) replacementString:string.string];
+				return;
 
 			} else if ([[event charactersIgnoringModifiers] isEqualToString:@"z"]) {
+				// Undo
 				if ([NSApp sendAction:@selector(undo:) to:nil from:self])
 					return;
 
 			} else if ([[event charactersIgnoringModifiers] caseInsensitiveCompare:@"a"] == NSOrderedSame) {
+				// Select all
 				if ([NSApp sendAction:@selector(selectAll:) to:nil from:self])
 					return;
 			}
 
 		} else if (([event modifierFlags] & NSDeviceIndependentModifierFlagsMask) == (NSCommandKeyMask | NSShiftKeyMask)) {
+			// Redo
 			if ([[event charactersIgnoringModifiers] isEqualToString:@"Z"]) {
 				if ([NSApp sendAction:@selector(redo:) to:nil from:self])
 					return;
