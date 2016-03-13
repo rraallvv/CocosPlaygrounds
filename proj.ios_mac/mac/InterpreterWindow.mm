@@ -10,148 +10,6 @@
 #include <iostream>
 #include <fcntl.h>
 
-using namespace std;
-
-enum {READ, WRITE};
-
-class CStdoutRedirector
-{
-public:
-	CStdoutRedirector();
-	virtual ~CStdoutRedirector();
-
-	virtual void StartRedirecting();
-	virtual void StopRedirecting();
-
-	virtual std::string GetOutput();
-	virtual void        ClearOutput();
-
-private:
-	int    _pipe[2];
-	int    _oldStdOut;
-	int    _oldStdErr;
-	bool   _redirecting;
-	std::string _redirectedOutput;
-};
-
-CStdoutRedirector::CStdoutRedirector()
-: _oldStdOut( 0 )
-, _oldStdErr( 0 )
-, _redirecting( false )
-{
-	_pipe[READ] = 0;
-	_pipe[WRITE] = 0;
-	if( pipe( _pipe ) != -1 ) {
-		_oldStdOut = dup( fileno(stdout) );
-		_oldStdErr = dup( fileno(stderr) );
-	}
-
-	setbuf( stdout, NULL );
-	setbuf( stderr, NULL );
-}
-
-CStdoutRedirector::~CStdoutRedirector()
-{
-	if( _redirecting ) {
-		StopRedirecting();
-	}
-
-	if( _oldStdOut > 0 ) {
-		close( _oldStdOut );
-	}
-	if( _oldStdErr > 0 ) {
-		close( _oldStdErr );
-	}
-	if( _pipe[READ] > 0 ) {
-		close( _pipe[READ] );
-	}
-	if( _pipe[WRITE] > 0 ) {
-		close( _pipe[WRITE] );
-	}
-}
-
-void
-CStdoutRedirector::StartRedirecting()
-{
-	if( _redirecting ) return;
-
-	dup2( _pipe[WRITE], fileno(stdout) );
-	dup2( _pipe[WRITE], fileno(stderr) );
-	_redirecting = true;
-}
-
-void
-CStdoutRedirector::StopRedirecting()
-{
-	if( !_redirecting ) return;
-
-	dup2( _oldStdOut, fileno(stdout) );
-	dup2( _oldStdErr, fileno(stderr) );
-	_redirecting = false;
-}
-
-string
-CStdoutRedirector::GetOutput()
-{
-	const size_t bufSize = 4096;
-	char buf[bufSize];
-	fcntl( _pipe[READ], F_SETFL, O_NONBLOCK );
-	ssize_t bytesRead = read( _pipe[READ], buf, bufSize - 1 );
-	while( bytesRead > 0 ) {
-		buf[bytesRead] = 0;
-		_redirectedOutput += buf;
-		bytesRead = read( _pipe[READ], buf, bufSize );
-	}
-
-	return _redirectedOutput;
-}
-
-void
-CStdoutRedirector::ClearOutput()
-{
-	_redirectedOutput.clear();
-}
-
-#define STR(s) #s
-
-#define MAX_LEN 8192
-char buffer[MAX_LEN+1] = {0};
-int out_pipe[2];
-int saved_stdout;
-bool capturing = false;
-
-bool startCapturing() {
-	saved_stdout = dup(STDOUT_FILENO);  /* save stdout for display later */
-
-	if( pipe(out_pipe) != 0 ) {          /* make a pipe */
-		return false;
-	}
-
-	dup2(out_pipe[1], STDOUT_FILENO);   /* redirect stdout to the pipe */
-	close(out_pipe[1]);
-	capturing = true;
-
-	return true;
-}
-
-void stopCapturing() {
-	if (!capturing) {
-		return;
-	}
-
-	fflush(stdout);
-
-	read(out_pipe[0], buffer, MAX_LEN); /* read from pipe into buffer */
-
-	dup2(saved_stdout, STDOUT_FILENO);  /* reconnect stdout for testing */
-
-	capturing = false;
-}
-
-std::string getCaptured() {
-	return buffer;
-}
-
 static const int argc = 10;
 static const char *argv[argc] = {
 	"/usr/local/opt/root/etc",
@@ -164,6 +22,8 @@ static const char *argv[argc] = {
 static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 
 @implementation InterpreterWindow
+
+enum {READ, WRITE};
 
 -(void)awakeFromNib {
 	self.textView.continuousSpellCheckingEnabled = NO;
@@ -178,9 +38,8 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 	_interpreter->loadFile("cocos2d.h");
 	_interpreter->loadFile("cocostudio/CocoStudio.h");
 
-	_interpreter->process(STR(using namespace std;));
-	_interpreter->process(STR(using namespace cocos2d;));
-	_interpreter->process(STR(cout << "Hello World!" << endl;));
+	_interpreter->process("using namespace std;");
+	_interpreter->process("using namespace cocos2d;");
 
 	std::string expression =
 	"/************ CocosPlaygrounds *************\n"
@@ -196,6 +55,34 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 	_interpreter->process(expression);
 
 	self.textView.string = [NSString stringWithFormat:@"%s", expression.c_str()];
+
+	redirectedOutput = [[NSMutableString alloc] init];
+
+	if( pipe( redirectionPipe ) != -1 ) {
+		oldStandardOutput = dup( fileno(stdout) );
+		oldStandardError = dup( fileno(stderr) );
+	}
+	setbuf( stdout, NULL );
+	setbuf( stderr, NULL );
+}
+
+- (void) dealloc {
+	if( redirecting  ) {
+		[self stopRedirecting];
+	}
+
+	if( oldStandardOutput > 0 ) {
+		close( oldStandardOutput );
+	}
+	if( oldStandardError > 0 ) {
+		close( oldStandardError );
+	}
+	if( redirectionPipe[READ] > 0 ) {
+		close( redirectionPipe[READ] );
+	}
+	if( redirectionPipe[WRITE] > 0 ) {
+		close( redirectionPipe[WRITE] );
+	}
 }
 
 - (void)sendEvent:(NSEvent*)event {
@@ -400,17 +287,15 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 }
 
 - (NSString *)processExpression:(NSString *)expression {
-	CStdoutRedirector theRedirector;
-
-	theRedirector.StartRedirecting();
+	[self startRedirecting];
 
 	_interpreter->process(expression.UTF8String);
 
-	theRedirector.StopRedirecting();
+	[self stopRedirecting];
 
-	NSString *result = [NSString stringWithFormat:@"\n%s", theRedirector.GetOutput().c_str()];
+	NSString *result = [NSString stringWithFormat:@"\n%@", [self output]];
 
-	theRedirector.ClearOutput();
+	[self clearOutput];
 
 	return result;
 }
@@ -446,6 +331,43 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 																		   attributes:attributes];
 	[self.textView.textStorage appendAttributedString:attributedString];
 	self.textView.selectedRange = NSMakeRange(self.textView.string.length, 0);
+}
+
+#pragma mark - std redirection
+
+- (void) startRedirecting {
+	if( redirecting ) return;
+
+	dup2( redirectionPipe[WRITE], fileno(stdout) );
+	dup2( redirectionPipe[WRITE], fileno(stderr) );
+	redirecting = true;
+}
+
+- (void) stopRedirecting {
+	if( !redirecting ) return;
+
+	dup2( oldStandardOutput, fileno(stdout) );
+	dup2( oldStandardError, fileno(stderr) );
+	redirecting = false;
+}
+
+- (NSString*) output {
+	const size_t bufferSize = 4096;
+	char buffer[bufferSize];
+	fcntl( redirectionPipe[READ], F_SETFL, O_NONBLOCK );
+	ssize_t bytesRead = read( redirectionPipe[READ], buffer, bufferSize - 1 );
+	while( bytesRead > 0 ) {
+		buffer[bytesRead] = 0;
+		NSString* tempString = [NSString stringWithCString:buffer encoding:NSUTF8StringEncoding];
+		[redirectedOutput appendString:tempString];
+		bytesRead = read( redirectionPipe[READ], buffer, bufferSize );
+	}
+
+	return [NSString stringWithFormat:@"%@", redirectedOutput];
+}
+
+- (void) clearOutput {
+	[redirectedOutput setString:@""];
 }
 
 @end
