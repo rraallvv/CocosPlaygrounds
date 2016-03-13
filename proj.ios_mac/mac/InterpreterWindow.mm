@@ -227,11 +227,11 @@ enum {READ, WRITE};
 		state = REPLACE_SELECTION;
 	}
 
+	NSDictionary *attributes = @{NSFontAttributeName: _font};
+
 	if (state == PASS_THROUGH) {
 		return YES;
 	}
-
-	NSDictionary *attributes = @{NSFontAttributeName: _font};
 
 	switch (state) {
 		case APPEND_CHAR:
