@@ -208,7 +208,7 @@ enum {READ, WRITE};
 	BOOL hasSelection = selectedRange.length > 0;
 	BOOL isSingleCharacter = affectedCharRange.length = 0;
 
-	enum {APPEND_CHAR, INSERT_CHAR, APPEND_SELECTION, REPLACE_SELECTION, PASS_THROUGH} state;
+	enum {APPEND_CHAR, APPEND_SELECTION, REPLACE_SELECTION, PASS_THROUGH} state;
 
 	if (!inCommandLine && !hasNewline && !hasSelection) {
 		state = APPEND_CHAR;
@@ -251,10 +251,6 @@ enum {READ, WRITE};
 	switch (state) {
 		case APPEND_CHAR:
 			[self appendString:replacement attributes:attributes];
-			break;
-
-		case INSERT_CHAR:
-			[self.textView.textStorage replaceCharactersInRange:selectedRange withString:replacement];
 			break;
 
 		case APPEND_SELECTION:
