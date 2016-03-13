@@ -131,54 +131,66 @@ enum {READ, WRITE};
 				if ([NSApp sendAction:@selector(redo:) to:nil from:self])
 					return;
 			}
-		} else {
-			switch( [event keyCode] ) {
-				case 126: {     // up arrow
-					__block NSInteger currentPosition =  self.textView.selectedRange.location;
-					dispatch_async(dispatch_get_main_queue(), ^{
-						NSString *text = self.textView.string;
-						if (currentPosition <= 0) currentPosition = text.length + 1;
+		}
 
-						NSInteger start = [text rangeOfString:@"\n" options:NSBackwardsSearch range:NSMakeRange(0, currentPosition - 1)].location;
-						if (start == NSNotFound) start = -1;
+		switch( [event keyCode] ) {
+			case 126: {     // up arrow
+				__block NSRange currentRange =  self.textView.selectedRange;
+				dispatch_async(dispatch_get_main_queue(), ^{
+					NSString *text = self.textView.string;
+					if (currentRange.location <= 0) currentRange.location = text.length + 1;
 
-						NSInteger length = [[text substringFromIndex:start + 1] rangeOfString:@"\n"].location;
+					NSInteger start = [text rangeOfString:@"\n" options:NSBackwardsSearch range:NSMakeRange(0, currentRange.location - 1)].location;
+					if (start == NSNotFound) start = -1;
 
-						NSRange selectedRange = NSMakeRange(start + 1, length + 1);
-						self.textView.selectedRange = selectedRange;
-						[self.textView scrollRangeToVisible:selectedRange];
-					});
-				}
-					break;
-				case 125: {     // down arrow
-					__block NSInteger currentPosition =  self.textView.selectedRange.location;
-					dispatch_async(dispatch_get_main_queue(), ^{
-						NSString *text = self.textView.string;
+					NSInteger length = [[text substringFromIndex:start + 1] rangeOfString:@"\n"].location;
 
-						NSInteger start = -1;
-						if (currentPosition < text.length) {
-							start = [[text substringFromIndex:currentPosition] rangeOfString:@"\n"].location;
-							if (start == NSNotFound) {
-								start = -1;
-							} else {
-								start = currentPosition + start;
-							}
-						}
+					NSRange selectedRange = NSMakeRange(start + 1, length + 1);
 
-						NSInteger length = [[text substringFromIndex:start + 1] rangeOfString:@"\n"].location;
+					if ((([event modifierFlags] & NSDeviceIndependentModifierFlagsMask) & NSShiftKeyMask) != 0) {
+						selectedRange = NSUnionRange(selectedRange, currentRange);
+					}
 
-						NSRange selectedRange = NSMakeRange(start + 1, length + 1);
-						self.textView.selectedRange = selectedRange;
-						[self.textView scrollRangeToVisible:selectedRange];
-					});
-				}
-					break;
-				case 124:       // right arrow
-				case 123:       // left arrow
-					break;
-				default:
-					break;
+					self.textView.selectedRange = selectedRange;
+					[self.textView scrollRangeToVisible:selectedRange];
+				});
 			}
+				break;
+			case 125: {     // down arrow
+				__block NSRange currentRange =  self.textView.selectedRange;
+				dispatch_async(dispatch_get_main_queue(), ^{
+					NSString *text = self.textView.string;
+
+					NSInteger end = [[text substringFromIndex:currentRange.location + currentRange.length] rangeOfString:@"\n"].location;
+					NSInteger length = 0;
+					if (end == NSNotFound) {
+						if (currentRange.length > 0) {
+							end = text.length + 1;
+						} else {
+							end = [text rangeOfString:@"\n"].location + 1;
+							length = end;
+						}
+					} else {
+						end += currentRange.location + currentRange.length + 1;
+						length = end - [text rangeOfString:@"\n" options:NSBackwardsSearch range:NSMakeRange(0, currentRange.location + currentRange.length)].location - 1;
+					}
+
+					NSRange selectedRange = NSMakeRange(end - length, length);
+
+					if ((([event modifierFlags] & NSDeviceIndependentModifierFlagsMask) & NSShiftKeyMask) != 0) {
+						selectedRange = NSUnionRange(selectedRange, currentRange);
+					}
+
+					self.textView.selectedRange = selectedRange;
+					[self.textView scrollRangeToVisible:selectedRange];
+				});
+			}
+				break;
+			case 124:       // right arrow
+			case 123:       // left arrow
+				break;
+			default:
+				break;
 		}
 	}
 	[super sendEvent:event];
