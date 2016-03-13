@@ -10,14 +10,13 @@
 #include <iostream>
 #include <fcntl.h>
 
-static const int argc = 10;
-static const char *argv[argc] = {
+static const char *argv[] = {
 	"/usr/local/opt/root/etc",
 	"-I/usr/local/opt/root/etc",
 	"-I/Applications/Cocos/Cocos2d-x/cocos2d-x-3.10/cocos",
 	"-I/Applications/Cocos/Cocos2d-x/cocos2d-x-3.10/cocos/editor-support",
 	"-I/Applications/Cocos/Cocos2d-x/cocos2d-x-3.10/external",
-	"-I/Applications/Cocos/Cocos2d-x/cocos2d-x-3.10/external/glfw3/include/mac",
+	"-I/Applications/Cocos/Cocos2d-x/cocos2d-x-3.10/external/glfw3/include/mac"
 };
 static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 
@@ -32,7 +31,7 @@ enum {READ, WRITE};
 	_font = [NSFont fontWithName:@"Menlo" size:11];
 	self.textView.typingAttributes = @{NSFontAttributeName: _font};
 
-	_interpreter = new cling::Interpreter(argc, argv, llvmdir);
+	_interpreter = new cling::Interpreter(sizeof(argv) / sizeof(*argv), argv, llvmdir);
 
 	_interpreter->loadFile("iostream");
 	_interpreter->loadFile("cocos2d.h");
