@@ -111,7 +111,7 @@ enum {READ, WRITE};
 					}
 				}];
 
-				[self textView:self.textView shouldChangeTextInRange:NSMakeRange(self.textView.string.length, 0) replacementString:string.string];
+				[self textView:self.textView shouldChangeTextInRange:self.textView.selectedRange replacementString:string.string];
 				return;
 
 			} else if ([[event charactersIgnoringModifiers] isEqualToString:@"z"]) {
