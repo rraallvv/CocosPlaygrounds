@@ -220,7 +220,7 @@ enum {READ, WRITE};
 	} else if (inCommandLine && !hasNewline && !hasSelection) {
 		state = PASS_THROUGH;
 	} else if (inCommandLine && hasNewline && !hasSelection) {
-		state = INSERT_CHAR;
+		state = APPEND_CHAR;
 	} else if (inCommandLine && !hasNewline && hasSelection) {
 		state = PASS_THROUGH;
 	} else if (inCommandLine && hasNewline && hasSelection) {
