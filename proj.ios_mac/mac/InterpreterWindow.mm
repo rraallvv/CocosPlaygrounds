@@ -206,6 +206,7 @@ enum {READ, WRITE};
 	BOOL inCommandLine = commandLinePosition <= affectedCharRange.location;
 	BOOL hasNewline = [replacementString rangeOfString:@"\n"].location != NSNotFound;
 	BOOL hasSelection = selectedRange.length > 0;
+	BOOL isSingleCharacter = affectedCharRange.length = 0;
 
 	enum {APPEND_CHAR, INSERT_CHAR, APPEND_SELECTION, REPLACE_SELECTION, PASS_THROUGH} state;
 
@@ -238,7 +239,12 @@ enum {READ, WRITE};
 			}
 			return NO;
 		} else {
-			return YES;
+			if (isSingleCharacter) {
+				return YES;
+			} else {
+				[self.textView.textStorage replaceCharactersInRange:selectedRange withString:replacement];
+				return NO;
+			}
 		}
 	}
 
