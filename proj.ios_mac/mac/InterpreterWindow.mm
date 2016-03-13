@@ -49,7 +49,8 @@ enum {READ, WRITE};
 	"layer->addChild(rootNode);\n"
 	"auto scene = Scene::create();\n"
 	"scene->addChild(layer);\n"
-	"Director::getInstance()->runWithScene(scene);\n";
+	"auto director = Director::getInstance();\n"
+	"director->runWithScene(scene);\n";
 
 	_interpreter->process(expression);
 
