@@ -50,7 +50,10 @@ enum {READ, WRITE};
 	"auto scene = Scene::create();\n"
 	"scene->addChild(layer);\n"
 	"auto director = Director::getInstance();\n"
-	"director->runWithScene(scene);\n";
+	"director->runWithScene(scene);\n"
+	"//auto sprite = Sprite::create(\"icon.png\");\n"
+	"//sprite->setPosition(director->getWinSize()/2);\n"
+	"//layer->addChild(sprite);\n";
 
 	_interpreter->process(expression);
 
@@ -206,7 +209,7 @@ enum {READ, WRITE};
 	BOOL inCommandLine = commandLinePosition <= affectedCharRange.location;
 	BOOL hasNewline = [replacementString rangeOfString:@"\n"].location != NSNotFound;
 	BOOL hasSelection = selectedRange.length > 0;
-	BOOL isSingleCharacter = affectedCharRange.length = 0;
+	BOOL isSingleCharacter = affectedCharRange.length == 0;
 
 	enum {APPEND_CHAR, APPEND_SELECTION, REPLACE_SELECTION, PASS_THROUGH} state;
 
