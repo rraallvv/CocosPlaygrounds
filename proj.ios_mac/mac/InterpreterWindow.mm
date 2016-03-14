@@ -209,7 +209,7 @@ enum {READ, WRITE};
 	BOOL inCommandLine = commandLinePosition <= affectedCharRange.location;
 	BOOL hasNewline = [replacementString rangeOfString:@"\n"].location != NSNotFound;
 	BOOL hasSelection = selectedRange.length > 0;
-	BOOL isSingleCharacter = affectedCharRange.length == 0;
+	BOOL isSingleCharacter = replacement.length <= 1;
 
 	enum {APPEND_CHAR, APPEND_SELECTION, REPLACE_SELECTION, PASS_THROUGH} state;
 
