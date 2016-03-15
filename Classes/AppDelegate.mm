@@ -1,4 +1,5 @@
 #include "AppDelegate.h"
+#import "InterpreterWindow.h"
 
 USING_NS_CC;
 
@@ -39,8 +40,8 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     FileUtils::getInstance()->addSearchPath("res");
 
-	NSWindowController *wc = (__bridge NSWindowController *)(__bridge_retained void *)[[NSWindowController alloc] initWithWindowNibName:@"Interpreter"];
-	[wc showWindow:nil];
+	InterpreterWindow *interpreterWindow = (__bridge InterpreterWindow *)(__bridge_retained void *)[[InterpreterWindow alloc] init];
+	[interpreterWindow makeKeyAndOrderFront:NSApp];
 
     return true;
 }

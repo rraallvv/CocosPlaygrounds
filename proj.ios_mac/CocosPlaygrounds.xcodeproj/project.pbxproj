@@ -59,7 +59,6 @@
 		E452F1541C92109F00E5E686 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = E452F1531C92109F00E5E686 /* icon.png */; };
 		E4C830561C8F0F3A009A81D1 /* libcocos2d Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 51554DA9A2FA70F46AF9E679 /* libcocos2d Mac.a */; };
 		E4C8305F1C8F2469009A81D1 /* libCling.so in Frameworks */ = {isa = PBXBuildFile; fileRef = E4C8305D1C8F2443009A81D1 /* libCling.so */; };
-		E4C830651C90BAA3009A81D1 /* Interpreter.xib in Resources */ = {isa = PBXBuildFile; fileRef = E4C830641C90BAA3009A81D1 /* Interpreter.xib */; };
 		E4C830681C90C5CA009A81D1 /* InterpreterWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4C830671C90C5CA009A81D1 /* InterpreterWindow.mm */; };
 		ED545A7C1B68A1F400C3958E /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = ED545A7B1B68A1F400C3958E /* libiconv.dylib */; };
 		ED545A7E1B68A1FA00C3958E /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = ED545A7D1B68A1FA00C3958E /* libiconv.dylib */; };
@@ -125,7 +124,6 @@
 		E4C830571C8F0F44009A81D1 /* libCling.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libCling.so; path = /usr/local/opt/root/lib/libCling.so; sourceTree = "<absolute>"; };
 		E4C8305D1C8F2443009A81D1 /* libCling.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libCling.so; path = /usr/local/opt/root/lib/libCling.so; sourceTree = "<absolute>"; };
 		E4C830621C909DA5009A81D1 /* libcocos2d Mac.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libcocos2d Mac.dylib"; path = "/Applications/Cocos/Cocos2d-x/cocos2d-x-3.10/prebuilt/mac/libcocos2d Mac.dylib"; sourceTree = "<absolute>"; };
-		E4C830641C90BAA3009A81D1 /* Interpreter.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = Interpreter.xib; path = mac/Interpreter.xib; sourceTree = SOURCE_ROOT; };
 		E4C830661C90C5CA009A81D1 /* InterpreterWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InterpreterWindow.h; path = mac/InterpreterWindow.h; sourceTree = "<group>"; };
 		E4C830671C90C5CA009A81D1 /* InterpreterWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InterpreterWindow.mm; path = mac/InterpreterWindow.mm; sourceTree = "<group>"; };
 		ED545A7B1B68A1F400C3958E /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.4.sdk/usr/lib/libiconv.dylib; sourceTree = DEVELOPER_DIR; };
@@ -279,7 +277,6 @@
 			isa = PBXGroup;
 			children = (
 				503AE0F517EB97AB00D1A890 /* Icons */,
-				E4C830641C90BAA3009A81D1 /* Interpreter.xib */,
 				E4C830661C90C5CA009A81D1 /* InterpreterWindow.h */,
 				E4C830671C90C5CA009A81D1 /* InterpreterWindow.mm */,
 				503AE10317EB98FF00D1A890 /* main.cpp */,
@@ -430,7 +427,6 @@
 				E452F1541C92109F00E5E686 /* icon.png in Resources */,
 				503AE0F817EB97AB00D1A890 /* Icon.icns in Resources */,
 				6CC743B7AEC6C4A1F5FEC304 /* res in Resources */,
-				E4C830651C90BAA3009A81D1 /* Interpreter.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

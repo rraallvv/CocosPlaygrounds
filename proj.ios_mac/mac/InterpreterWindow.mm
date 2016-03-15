@@ -24,49 +24,62 @@ static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 
 enum {READ, WRITE};
 
--(void)awakeFromNib {
-	self.textView.continuousSpellCheckingEnabled = NO;
-	self.textView.automaticQuoteSubstitutionEnabled = NO;
-	self.textView.enabledTextCheckingTypes = 0;
-	_font = [NSFont fontWithName:@"Menlo" size:11];
-	self.textView.typingAttributes = @{NSFontAttributeName: _font};
+-(id)init {
+	if (self = [super initWithContentRect:NSMakeRect(0, 0, 480, 270)
+								styleMask:NSTitledWindowMask | NSClosableWindowMask | NSResizableWindowMask
+								  backing:NSBackingStoreNonretained
+									defer:NO
+								   screen:[NSScreen mainScreen]]) {
+		self.textView = [[NSTextView alloc] initWithFrame:self.contentView.frame];
+		[self.contentView addSubview:self.textView];
+		self.textView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+		self.textView.delegate = self;
+		self.textView.continuousSpellCheckingEnabled = NO;
+		self.textView.automaticQuoteSubstitutionEnabled = NO;
+		self.textView.enabledTextCheckingTypes = 0;
+		_font = [NSFont fontWithName:@"Menlo" size:11];
+		self.textView.typingAttributes = @{NSFontAttributeName: _font};
 
-	_interpreter = new cling::Interpreter(sizeof(argv) / sizeof(*argv), argv, llvmdir);
+		_interpreter = new cling::Interpreter(sizeof(argv) / sizeof(*argv), argv, llvmdir);
 
-	_interpreter->loadFile("iostream");
-	_interpreter->loadFile("cocos2d.h");
-	_interpreter->loadFile("cocostudio/CocoStudio.h");
+		_interpreter->loadFile("iostream");
+		_interpreter->loadFile("cocos2d.h");
+		_interpreter->loadFile("cocostudio/CocoStudio.h");
 
-	_interpreter->process("using namespace std;");
-	_interpreter->process("using namespace cocos2d;");
+		_interpreter->process("using namespace std;");
+		_interpreter->process("using namespace cocos2d;");
 
-	std::string expression =
-	"/************ CocosPlaygrounds *************\n"
-	" * Type C++ code and press enter to run it *\n"
-	" *******************************************/\n\n"
-	"auto rootNode = CSLoader::createNode(\"MainScene.csb\");\n"
-	"auto layer = Layer::create();\n"
-	"layer->addChild(rootNode);\n"
-	"auto scene = Scene::create();\n"
-	"scene->addChild(layer);\n"
-	"auto director = Director::getInstance();\n"
-	"director->runWithScene(scene);\n"
-	"//auto sprite = Sprite::create(\"icon.png\");\n"
-	"//sprite->setPosition(director->getWinSize()/2);\n"
-	"//layer->addChild(sprite);\n";
+		std::string expression =
+		"/************ CocosPlaygrounds *************\n"
+		" * Type C++ code and press enter to run it *\n"
+		" *******************************************/\n\n"
+		"auto rootNode = CSLoader::createNode(\"MainScene.csb\");\n"
+		"auto layer = Layer::create();\n"
+		"layer->addChild(rootNode);\n"
+		"auto scene = Scene::create();\n"
+		"scene->addChild(layer);\n"
+		"auto director = Director::getInstance();\n"
+		"director->runWithScene(scene);\n"
+		"//auto sprite = Sprite::create(\"icon.png\");\n"
+		"//sprite->setPosition(director->getWinSize()/2);\n"
+		"//layer->addChild(sprite);\n";
 
-	_interpreter->process(expression);
+		_interpreter->process(expression);
 
-	self.textView.string = [NSString stringWithFormat:@"%s", expression.c_str()];
+		self.textView.string = [NSString stringWithFormat:@"%s", expression.c_str()];
 
-	redirectedOutput = [[NSMutableString alloc] init];
+		redirectedOutput = [[NSMutableString alloc] init];
 
-	if( pipe( redirectionPipe ) != -1 ) {
-		oldStandardOutput = dup( fileno(stdout) );
-		oldStandardError = dup( fileno(stderr) );
+		if( pipe( redirectionPipe ) != -1 ) {
+			oldStandardOutput = dup( fileno(stdout) );
+			oldStandardError = dup( fileno(stderr) );
+		}
+
+		setbuf( stdout, NULL );
+		setbuf( stderr, NULL );
 	}
-	setbuf( stdout, NULL );
-	setbuf( stderr, NULL );
+
+	return self;
 }
 
 - (void) dealloc {
