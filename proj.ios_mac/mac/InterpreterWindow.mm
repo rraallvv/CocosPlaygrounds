@@ -30,9 +30,50 @@ enum {READ, WRITE};
 								  backing:NSBackingStoreNonretained
 									defer:NO
 								   screen:[NSScreen mainScreen]]) {
-		self.textView = [[NSTextView alloc] initWithFrame:self.contentView.frame];
-		[self.contentView addSubview:self.textView];
-		self.textView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+
+		CGFloat margin = 20;
+
+		NSRect scrollViewRect = NSMakeRect(
+										   margin,
+										   margin,
+										   self.contentView.bounds.size.width - margin * 2,
+										   self.contentView.bounds.size.height - margin * 2
+										   );
+
+		NSScrollView *scrollview = [[NSScrollView alloc] initWithFrame:scrollViewRect];
+		scrollview.backgroundColor = [[NSColor blueColor] colorWithAlphaComponent:0.2];
+		scrollview.drawsBackground = YES;
+
+		NSSize contentSize = [scrollview contentSize];
+
+		scrollview.borderType = NSGrooveBorder;
+
+		scrollview.hasVerticalScroller = YES;
+		scrollview.hasHorizontalScroller = NO;
+
+		scrollview.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+
+		self.textView = [[NSTextView alloc] initWithFrame:scrollview.bounds];
+		self.textView.drawsBackground = NO;
+
+		self.textView.minSize = NSMakeSize(0.0, contentSize.height);
+		self.textView.maxSize = NSMakeSize(CGFLOAT_MAX, CGFLOAT_MAX);
+
+		self.textView.verticallyResizable = YES;
+		self.textView.horizontallyResizable = NO;
+
+		self.textView.autoresizingMask = NSViewWidthSizable;
+
+		self.textView.textContainer.containerSize = NSMakeSize(contentSize.width, CGFLOAT_MAX);
+		self.textView.textContainer.widthTracksTextView = YES;
+
+		scrollview.documentView = self.textView;
+
+		[self.contentView addSubview:scrollview];
+
+
+		//self.textView.autoresizesSubviews = YES;
+		//self.textView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
 		self.textView.delegate = self;
 		self.textView.continuousSpellCheckingEnabled = NO;
 		self.textView.automaticQuoteSubstitutionEnabled = NO;
