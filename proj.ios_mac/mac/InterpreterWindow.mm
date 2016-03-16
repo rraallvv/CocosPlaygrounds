@@ -31,22 +31,17 @@ enum {READ, WRITE};
 									defer:NO
 								   screen:[NSScreen mainScreen]]) {
 
-		CGFloat margin = 20;
+		CGFloat margin = 4;
 
-		NSRect scrollViewRect = NSMakeRect(
-										   margin,
-										   margin,
-										   self.contentView.bounds.size.width - margin * 2,
-										   self.contentView.bounds.size.height - margin * 2
-										   );
+		NSRect scrollViewRect = NSInsetRect(self.contentView.bounds, margin, margin);
 
 		NSScrollView *scrollview = [[NSScrollView alloc] initWithFrame:scrollViewRect];
-		scrollview.backgroundColor = [[NSColor blueColor] colorWithAlphaComponent:0.2];
+		//scrollview.backgroundColor = [[NSColor blueColor] colorWithAlphaComponent:0.2];
 		scrollview.drawsBackground = YES;
 
 		NSSize contentSize = [scrollview contentSize];
 
-		scrollview.borderType = NSGrooveBorder;
+		scrollview.borderType = NSBezelBorder;
 
 		scrollview.hasVerticalScroller = YES;
 		scrollview.hasHorizontalScroller = NO;
