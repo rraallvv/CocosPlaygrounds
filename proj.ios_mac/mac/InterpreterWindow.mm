@@ -11,14 +11,14 @@
 #include <fcntl.h>
 
 static const char *argv[] = {
-	"/usr/local/opt/root/etc",
-	"-I/usr/local/opt/root/etc",
+	"/usr/local/opt/cling/include",
+	"-I/usr/local/opt/cling/include",
 	"-I/Applications/Cocos/Cocos2d-x/cocos2d-x-3.10/cocos",
 	"-I/Applications/Cocos/Cocos2d-x/cocos2d-x-3.10/cocos/editor-support",
 	"-I/Applications/Cocos/Cocos2d-x/cocos2d-x-3.10/external",
 	"-I/Applications/Cocos/Cocos2d-x/cocos2d-x-3.10/external/glfw3/include/mac"
 };
-static const char *llvmdir = "/usr/local/opt/root/etc/cling";
+static const char *llvmdir = "/usr/local/opt/cling";
 
 @implementation InterpreterWindow
 
@@ -135,6 +135,8 @@ enum {READ, WRITE};
 	if( redirectionPipe[WRITE] > 0 ) {
 		close( redirectionPipe[WRITE] );
 	}
+
+	[super dealloc];
 }
 
 - (void)sendEvent:(NSEvent*)event {
