@@ -40,7 +40,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     FileUtils::getInstance()->addSearchPath("res");
 
-	InterpreterWindow *interpreterWindow = (__bridge InterpreterWindow *)(__bridge_retained void *)[[InterpreterWindow alloc] init];
+	InterpreterWindow *interpreterWindow = (__bridge InterpreterWindow *)(void *)[[InterpreterWindow alloc] init];
 	[interpreterWindow makeKeyAndOrderFront:NSApp];
 
     return true;
