@@ -95,28 +95,33 @@ enum {READ, WRITE};
 		@"auto scene = Scene::create();\n"
 		@"scene->addChild(layer);\n"
 		@"auto director = Director::getInstance();\n"
-		@"director->runWithScene(scene);\n"
-		@"//auto sprite = Sprite::create(\"icon.png\");\n"
-		@"//sprite->setPosition(director->getWinSize()/2);\n"
-		@"//layer->addChild(sprite);\n";
+		@"director->runWithScene(scene);\n";
 
 		[self processExpression:expression];
 
-		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+#if 1
+		expression =
+		@"auto sprite = Sprite::create(\"icon.png\");\n"
+		@"sprite->setPosition(director->getWinSize()/2);\n"
+		@"layer->addChild(sprite);\n";
+
+		[self processExpression:expression];
+#else
+		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
 			expression = @"auto sprite = Sprite::create(\"icon.png\");\n";
 			[self processExpression:expression];
 
-			dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+			dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
 				expression = @"sprite->setPosition(director->getWinSize()/2);\n";
 				[self processExpression:expression];
 
-				dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+				dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
 					expression = @"layer->addChild(sprite);\n";
 					[self processExpression:expression];
 				});
 			});
 		});
-
+#endif
 		//self.textView.string = [NSString stringWithFormat:@"%s", expression.c_str()];
 
 		redirectedOutput = [[NSMutableString alloc] init];
