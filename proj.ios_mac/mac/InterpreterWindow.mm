@@ -100,19 +100,19 @@ enum {READ, WRITE};
 		@"//sprite->setPosition(director->getWinSize()/2);\n"
 		@"//layer->addChild(sprite);\n";
 
-		[self appendExpression:expression];
+		[self processExpression:expression];
 
 		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
 			expression = @"auto sprite = Sprite::create(\"icon.png\");\n";
-			[self appendExpression:expression];
+			[self processExpression:expression];
 
 			dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
 				expression = @"sprite->setPosition(director->getWinSize()/2);\n";
-				[self appendExpression:expression];
+				[self processExpression:expression];
 
 				dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
 					expression = @"layer->addChild(sprite);\n";
-					[self appendExpression:expression];
+					[self processExpression:expression];
 				});
 			});
 		});
@@ -349,8 +349,23 @@ enum {READ, WRITE};
 	for (NSInteger i = 0; i < expressions.count; i++) {
 		NSString *expression = expressions[i];
 		[self appendString:expression attributes:attributes];
+
 		if (expression.length > 0 && i < expressions.count - 1) {
-			NSString *result = [self processExpression:expression];
+			[self startRedirecting];
+
+			_interpreter->process(expression.UTF8String);
+
+			[self stopRedirecting];
+
+			NSString *result = [self output];
+			if ([result isEqualToString:@"(null)" ]) {
+				result = @"\n";
+			} else {
+				result = [NSString stringWithFormat:@"\n%@", result];
+			}
+			
+			[self clearOutput];
+
 			[self appendString:result attributes:resultAttributes];
 		}
 	}
@@ -400,27 +415,8 @@ enum {READ, WRITE};
 	return NO;
 }
 
-- (void)appendExpression:(NSString *)expression {
+- (void)processExpression:(NSString *)expression {
 	[self textView:self.textView shouldChangeTextInRange:NSMakeRange(self.textView.string.length, 0) replacementString:expression];
-}
-
-- (NSString *)processExpression:(NSString *)expression {
-	[self startRedirecting];
-
-	_interpreter->process(expression.UTF8String);
-
-	[self stopRedirecting];
-
-	NSString *result = [self output];
-	if ([result isEqualToString:@"(null)" ]) {
-		result = @"\n";
-	} else {
-		result = [NSString stringWithFormat:@"\n%@", result];
-	}
-
-	[self clearOutput];
-
-	return result;
 }
 
 - (void)exportToInterpreter:(const std::string)typeName name:(std::string)name object:(void *)object {
