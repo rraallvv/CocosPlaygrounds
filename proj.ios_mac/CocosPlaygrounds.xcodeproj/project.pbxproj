@@ -56,52 +56,11 @@
 		D44C620E132DFF430009C878 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D44C620D132DFF430009C878 /* AVFoundation.framework */; };
 		D44C6210132DFF4E0009C878 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D44C620F132DFF4E0009C878 /* AudioToolbox.framework */; };
 		D6B0611B1803AB670077942B /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6B0611A1803AB670077942B /* CoreMotion.framework */; };
-		E44DEF9C1C9A168B00932A42 /* libclingInterpreter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4C830521C8F0E44009A81D1 /* libclingInterpreter.a */; };
-		E44DEF9E1C9A16C600932A42 /* libLLVMX86AsmParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DEF9D1C9A16C600932A42 /* libLLVMX86AsmParser.a */; };
-		E44DEFA01C9A16FC00932A42 /* libLLVMX86CodeGen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DEF9F1C9A16FC00932A42 /* libLLVMX86CodeGen.a */; };
-		E44DEFA21C9A172A00932A42 /* libLLVMX86Info.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DEFA11C9A172A00932A42 /* libLLVMX86Info.a */; };
-		E44DEFA41C9A175B00932A42 /* libLLVMX86Desc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DEFA31C9A175B00932A42 /* libLLVMX86Desc.a */; };
-		E44DEFA61C9A17B300932A42 /* libLLVMAsmPrinter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DEFA51C9A17B300932A42 /* libLLVMAsmPrinter.a */; };
-		E44DEFA81C9A181B00932A42 /* libLLVMCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DEFA71C9A181B00932A42 /* libLLVMCore.a */; };
-		E44DEFAA1C9A185600932A42 /* libLLVMMC.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DEFA91C9A185600932A42 /* libLLVMMC.a */; };
-		E44DEFAC1C9A18B600932A42 /* libLLVMSupport.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DEFAB1C9A18B600932A42 /* libLLVMSupport.a */; };
-		E44DEFAE1C9A191200932A42 /* libLLVMMCParser.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DEFAD1C9A191200932A42 /* libLLVMMCParser.a */; };
-		E44DEFB01C9A195A00932A42 /* libLLVMCodeGen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DEFAF1C9A195A00932A42 /* libLLVMCodeGen.a */; };
-		E44DEFB11C9A19D200932A42 /* libclingUtils.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DEF981C9A115F00932A42 /* libclingUtils.a */; };
-		E44DF02B1C9A19D600932A42 /* libclangAnalysis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DEFB31C9A19D200932A42 /* libclangAnalysis.a */; };
-		E44DF02D1C9A19D600932A42 /* libclangAST.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DEFB51C9A19D200932A42 /* libclangAST.a */; };
-		E44DF02F1C9A19D600932A42 /* libclangBasic.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DEFB71C9A19D200932A42 /* libclangBasic.a */; };
-		E44DF0301C9A19D600932A42 /* libclangCodeGen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DEFB81C9A19D200932A42 /* libclangCodeGen.a */; };
-		E44DF0311C9A19D600932A42 /* libclangDriver.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DEFB91C9A19D200932A42 /* libclangDriver.a */; };
-		E44DF0331C9A19D600932A42 /* libclangEdit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DEFBB1C9A19D200932A42 /* libclangEdit.a */; };
-		E44DF0351C9A19D600932A42 /* libclangFrontend.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DEFBD1C9A19D300932A42 /* libclangFrontend.a */; };
-		E44DF0381C9A19D600932A42 /* libclangLex.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DEFC01C9A19D300932A42 /* libclangLex.a */; };
-		E44DF0391C9A19D600932A42 /* libclangParse.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DEFC11C9A19D300932A42 /* libclangParse.a */; };
-		E44DF03C1C9A19D600932A42 /* libclangSema.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DEFC41C9A19D300932A42 /* libclangSema.a */; };
-		E44DF03D1C9A19D600932A42 /* libclangSerialization.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DEFC51C9A19D300932A42 /* libclangSerialization.a */; };
-		E44DF04E1C9A19D600932A42 /* libLLVMAnalysis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DEFD61C9A19D300932A42 /* libLLVMAnalysis.a */; };
-		E44DF0561C9A19D600932A42 /* libLLVMBitReader.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DEFDE1C9A19D300932A42 /* libLLVMBitReader.a */; };
-		E44DF05B1C9A19D600932A42 /* libLLVMExecutionEngine.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DEFE31C9A19D400932A42 /* libLLVMExecutionEngine.a */; };
-		E44DF0601C9A19D600932A42 /* libLLVMInstCombine.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DEFE81C9A19D400932A42 /* libLLVMInstCombine.a */; };
-		E44DF0621C9A19D600932A42 /* libLLVMipa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DEFEA1C9A19D400932A42 /* libLLVMipa.a */; };
-		E44DF0631C9A19D600932A42 /* libLLVMipo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DEFEB1C9A19D400932A42 /* libLLVMipo.a */; };
-		E44DF0681C9A19D600932A42 /* libLLVMMCDisassembler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DEFF01C9A19D400932A42 /* libLLVMMCDisassembler.a */; };
-		E44DF0691C9A19D600932A42 /* libLLVMMCJIT.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DEFF11C9A19D400932A42 /* libLLVMMCJIT.a */; };
-		E44DF0791C9A19D600932A42 /* libLLVMObject.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DF0011C9A19D400932A42 /* libLLVMObject.a */; };
-		E44DF07A1C9A19D600932A42 /* libLLVMOption.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DF0021C9A19D400932A42 /* libLLVMOption.a */; };
-		E44DF0821C9A19D600932A42 /* libLLVMProfileData.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DF00A1C9A19D500932A42 /* libLLVMProfileData.a */; };
-		E44DF0881C9A19D600932A42 /* libLLVMRuntimeDyld.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DF0101C9A19D500932A42 /* libLLVMRuntimeDyld.a */; };
-		E44DF0891C9A19D600932A42 /* libLLVMScalarOpts.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DF0111C9A19D500932A42 /* libLLVMScalarOpts.a */; };
-		E44DF08A1C9A19D600932A42 /* libLLVMSelectionDAG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DF0121C9A19D500932A42 /* libLLVMSelectionDAG.a */; };
-		E44DF0981C9A19D700932A42 /* libLLVMTarget.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DF0201C9A19D500932A42 /* libLLVMTarget.a */; };
-		E44DF0991C9A19D700932A42 /* libLLVMTransformUtils.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DF0211C9A19D500932A42 /* libLLVMTransformUtils.a */; };
-		E44DF09A1C9A19D700932A42 /* libLLVMVectorize.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DF0221C9A19D500932A42 /* libLLVMVectorize.a */; };
-		E44DF09B1C9A19D700932A42 /* libLLVMX86AsmPrinter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DF0231C9A19D600932A42 /* libLLVMX86AsmPrinter.a */; };
-		E44DF09D1C9A19D700932A42 /* libLLVMX86Utils.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DF0251C9A19D600932A42 /* libLLVMX86Utils.a */; };
 		E44DF0A41C9A1C2800932A42 /* libncurses.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = E44DF0A31C9A1C2800932A42 /* libncurses.tbd */; };
 		E452F1541C92109F00E5E686 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = E452F1531C92109F00E5E686 /* icon.png */; };
-		E4C830561C8F0F3A009A81D1 /* libcocos2d Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 51554DA9A2FA70F46AF9E679 /* libcocos2d Mac.a */; };
 		E4C830681C90C5CA009A81D1 /* InterpreterWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4C830671C90C5CA009A81D1 /* InterpreterWindow.mm */; };
+		E4CB00DB1C9DBBFE00130511 /* libCling.so in Frameworks */ = {isa = PBXBuildFile; fileRef = E4CB00DA1C9DBBFE00130511 /* libCling.so */; };
+		E4CB00DC1C9DBDE100130511 /* libcocos2d Mac.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E4C830621C909DA5009A81D1 /* libcocos2d Mac.dylib */; };
 		ED545A7C1B68A1F400C3958E /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = ED545A7B1B68A1F400C3958E /* libiconv.dylib */; };
 		ED545A7E1B68A1FA00C3958E /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = ED545A7D1B68A1FA00C3958E /* libiconv.dylib */; };
 /* End PBXBuildFile section */
@@ -301,6 +260,7 @@
 		E4C830621C909DA5009A81D1 /* libcocos2d Mac.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libcocos2d Mac.dylib"; path = "/Applications/Cocos/Cocos2d-x/cocos2d-x-3.10/prebuilt/mac/libcocos2d Mac.dylib"; sourceTree = "<absolute>"; };
 		E4C830661C90C5CA009A81D1 /* InterpreterWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InterpreterWindow.h; path = mac/InterpreterWindow.h; sourceTree = "<group>"; };
 		E4C830671C90C5CA009A81D1 /* InterpreterWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InterpreterWindow.mm; path = mac/InterpreterWindow.mm; sourceTree = "<group>"; };
+		E4CB00DA1C9DBBFE00130511 /* libCling.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libCling.so; path = ../../../../Desktop/root/lib/libCling.so; sourceTree = "<group>"; };
 		ED545A7B1B68A1F400C3958E /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.4.sdk/usr/lib/libiconv.dylib; sourceTree = DEVELOPER_DIR; };
 		ED545A7D1B68A1FA00C3958E /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -341,49 +301,8 @@
 				5087E76917EB910900C73F5D /* OpenAL.framework in Frameworks */,
 				5087E76A17EB910900C73F5D /* AVFoundation.framework in Frameworks */,
 				5087E76B17EB910900C73F5D /* AudioToolbox.framework in Frameworks */,
-				E4C830561C8F0F3A009A81D1 /* libcocos2d Mac.a in Frameworks */,
-				E44DF02B1C9A19D600932A42 /* libclangAnalysis.a in Frameworks */,
-				E44DF02D1C9A19D600932A42 /* libclangAST.a in Frameworks */,
-				E44DF02F1C9A19D600932A42 /* libclangBasic.a in Frameworks */,
-				E44DF0301C9A19D600932A42 /* libclangCodeGen.a in Frameworks */,
-				E44DF0311C9A19D600932A42 /* libclangDriver.a in Frameworks */,
-				E44DF0331C9A19D600932A42 /* libclangEdit.a in Frameworks */,
-				E44DF0351C9A19D600932A42 /* libclangFrontend.a in Frameworks */,
-				E44DF0381C9A19D600932A42 /* libclangLex.a in Frameworks */,
-				E44DF0391C9A19D600932A42 /* libclangParse.a in Frameworks */,
-				E44DF03C1C9A19D600932A42 /* libclangSema.a in Frameworks */,
-				E44DF03D1C9A19D600932A42 /* libclangSerialization.a in Frameworks */,
-				E44DEF9C1C9A168B00932A42 /* libclingInterpreter.a in Frameworks */,
-				E44DEFB11C9A19D200932A42 /* libclingUtils.a in Frameworks */,
-				E44DF04E1C9A19D600932A42 /* libLLVMAnalysis.a in Frameworks */,
-				E44DEFA61C9A17B300932A42 /* libLLVMAsmPrinter.a in Frameworks */,
-				E44DF0561C9A19D600932A42 /* libLLVMBitReader.a in Frameworks */,
-				E44DEFB01C9A195A00932A42 /* libLLVMCodeGen.a in Frameworks */,
-				E44DEFA81C9A181B00932A42 /* libLLVMCore.a in Frameworks */,
-				E44DF05B1C9A19D600932A42 /* libLLVMExecutionEngine.a in Frameworks */,
-				E44DF0601C9A19D600932A42 /* libLLVMInstCombine.a in Frameworks */,
-				E44DF0621C9A19D600932A42 /* libLLVMipa.a in Frameworks */,
-				E44DF0631C9A19D600932A42 /* libLLVMipo.a in Frameworks */,
-				E44DEFAA1C9A185600932A42 /* libLLVMMC.a in Frameworks */,
-				E44DF0681C9A19D600932A42 /* libLLVMMCDisassembler.a in Frameworks */,
-				E44DF0691C9A19D600932A42 /* libLLVMMCJIT.a in Frameworks */,
-				E44DEFAE1C9A191200932A42 /* libLLVMMCParser.a in Frameworks */,
-				E44DF0791C9A19D600932A42 /* libLLVMObject.a in Frameworks */,
-				E44DF07A1C9A19D600932A42 /* libLLVMOption.a in Frameworks */,
-				E44DF0821C9A19D600932A42 /* libLLVMProfileData.a in Frameworks */,
-				E44DF0881C9A19D600932A42 /* libLLVMRuntimeDyld.a in Frameworks */,
-				E44DF0891C9A19D600932A42 /* libLLVMScalarOpts.a in Frameworks */,
-				E44DF08A1C9A19D600932A42 /* libLLVMSelectionDAG.a in Frameworks */,
-				E44DEFAC1C9A18B600932A42 /* libLLVMSupport.a in Frameworks */,
-				E44DF0981C9A19D700932A42 /* libLLVMTarget.a in Frameworks */,
-				E44DF0991C9A19D700932A42 /* libLLVMTransformUtils.a in Frameworks */,
-				E44DF09A1C9A19D700932A42 /* libLLVMVectorize.a in Frameworks */,
-				E44DEF9E1C9A16C600932A42 /* libLLVMX86AsmParser.a in Frameworks */,
-				E44DF09B1C9A19D700932A42 /* libLLVMX86AsmPrinter.a in Frameworks */,
-				E44DEFA01C9A16FC00932A42 /* libLLVMX86CodeGen.a in Frameworks */,
-				E44DEFA41C9A175B00932A42 /* libLLVMX86Desc.a in Frameworks */,
-				E44DEFA21C9A172A00932A42 /* libLLVMX86Info.a in Frameworks */,
-				E44DF09D1C9A19D700932A42 /* libLLVMX86Utils.a in Frameworks */,
+				E4CB00DC1C9DBDE100130511 /* libcocos2d Mac.dylib in Frameworks */,
+				E4CB00DB1C9DBBFE00130511 /* libCling.so in Frameworks */,
 				E44DF0A41C9A1C2800932A42 /* libncurses.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -433,6 +352,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E4CB00DA1C9DBBFE00130511 /* libCling.so */,
 				E44DF0A31C9A1C2800932A42 /* libncurses.tbd */,
 				E44DEFB31C9A19D200932A42 /* libclangAnalysis.a */,
 				E44DEFB41C9A19D200932A42 /* libclangARCMigrate.a */,
@@ -904,13 +824,15 @@
 					"$(inherited)",
 					"/Applications/Cocos/Cocos2d-x/cocos2d-x-3.10/cocos/platform/mac",
 					"/Applications/Cocos/Cocos2d-x/cocos2d-x-3.10/external/glfw3/include/mac",
-					/usr/local/opt/cling/include,
+					/usr/local/opt/root/include,
+					/usr/local/opt/root/etc,
+					/usr/local/opt/root/etc/cling,
 				);
 				INFOPLIST_FILE = mac/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "/Applications/Cocos/Cocos2d-x/cocos2d-x-3.10/prebuilt/mac /usr/local/opt/cling/lib";
+				LD_RUNPATH_SEARCH_PATHS = "/Applications/Cocos/Cocos2d-x/cocos2d-x-3.10/prebuilt/mac /usr/local/opt/root/lib";
 				LIBRARY_SEARCH_PATHS = (
 					"/Applications/Cocos/Cocos2d-x/cocos2d-x-3.10/prebuilt/mac",
-					/usr/local/opt/cling/lib,
+					/usr/local/opt/root/lib,
 				);
 				OTHER_LDFLAGS = (
 					"$(_COCOS_LIB_MAC_BEGIN)",
@@ -941,13 +863,15 @@
 					"$(inherited)",
 					"/Applications/Cocos/Cocos2d-x/cocos2d-x-3.10/cocos/platform/mac",
 					"/Applications/Cocos/Cocos2d-x/cocos2d-x-3.10/external/glfw3/include/mac",
-					/usr/local/opt/cling/include,
+					/usr/local/opt/root/include,
+					/usr/local/opt/root/etc,
+					/usr/local/opt/root/etc/cling,
 				);
 				INFOPLIST_FILE = mac/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "/Applications/Cocos/Cocos2d-x/cocos2d-x-3.10/prebuilt/mac /usr/local/opt/cling/lib";
+				LD_RUNPATH_SEARCH_PATHS = "/Applications/Cocos/Cocos2d-x/cocos2d-x-3.10/prebuilt/mac /usr/local/opt/root/lib";
 				LIBRARY_SEARCH_PATHS = (
 					"/Applications/Cocos/Cocos2d-x/cocos2d-x-3.10/prebuilt/mac",
-					/usr/local/opt/cling/lib,
+					/usr/local/opt/root/lib,
 				);
 				OTHER_LDFLAGS = (
 					"$(_COCOS_LIB_MAC_BEGIN)",

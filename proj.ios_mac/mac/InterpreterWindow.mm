@@ -11,14 +11,14 @@
 #include <fcntl.h>
 
 static const char *argv[] = {
-	"/usr/local/opt/cling/include",
-	"-I/usr/local/opt/cling/include",
+	"/usr/local/opt/root/etc",
+	"-I/usr/local/opt/root/etc",
 	"-I/Applications/Cocos/Cocos2d-x/cocos2d-x-3.10/cocos",
 	"-I/Applications/Cocos/Cocos2d-x/cocos2d-x-3.10/cocos/editor-support",
 	"-I/Applications/Cocos/Cocos2d-x/cocos2d-x-3.10/external",
 	"-I/Applications/Cocos/Cocos2d-x/cocos2d-x-3.10/external/glfw3/include/mac"
 };
-static const char *llvmdir = "/usr/local/opt/cling";
+static const char *llvmdir = "/usr/local/opt/root/etc/cling";
 
 @implementation InterpreterWindow
 
@@ -85,24 +85,39 @@ enum {READ, WRITE};
 		_interpreter->process("using namespace std;");
 		_interpreter->process("using namespace cocos2d;");
 
-		std::string expression =
-		"/************ CocosPlaygrounds *************\n"
-		" * Type C++ code and press enter to run it *\n"
-		" *******************************************/\n\n"
-		"auto rootNode = CSLoader::createNode(\"MainScene.csb\");\n"
-		"auto layer = Layer::create();\n"
-		"layer->addChild(rootNode);\n"
-		"auto scene = Scene::create();\n"
-		"scene->addChild(layer);\n"
-		"auto director = Director::getInstance();\n"
-		"director->runWithScene(scene);\n"
-		"//auto sprite = Sprite::create(\"icon.png\");\n"
-		"//sprite->setPosition(director->getWinSize()/2);\n"
-		"//layer->addChild(sprite);\n";
+		__block NSString *expression =
+		@"/************ CocosPlaygrounds *************\n"
+		@" * Type C++ code and press enter to run it *\n"
+		@" *******************************************/\n\n"
+		@"auto rootNode = CSLoader::createNode(\"MainScene.csb\");\n"
+		@"auto layer = Layer::create();\n"
+		@"layer->addChild(rootNode);\n"
+		@"auto scene = Scene::create();\n"
+		@"scene->addChild(layer);\n"
+		@"auto director = Director::getInstance();\n"
+		@"director->runWithScene(scene);\n"
+		@"//auto sprite = Sprite::create(\"icon.png\");\n"
+		@"//sprite->setPosition(director->getWinSize()/2);\n"
+		@"//layer->addChild(sprite);\n";
 
-		_interpreter->process(expression);
+		[self appendExpression:expression];
 
-		self.textView.string = [NSString stringWithFormat:@"%s", expression.c_str()];
+		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+			expression = @"auto sprite = Sprite::create(\"icon.png\");\n";
+			[self appendExpression:expression];
+
+			dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+				expression = @"sprite->setPosition(director->getWinSize()/2);\n";
+				[self appendExpression:expression];
+
+				dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+					expression = @"layer->addChild(sprite);\n";
+					[self appendExpression:expression];
+				});
+			});
+		});
+
+		//self.textView.string = [NSString stringWithFormat:@"%s", expression.c_str()];
 
 		redirectedOutput = [[NSMutableString alloc] init];
 
@@ -252,7 +267,12 @@ enum {READ, WRITE};
 
 - (BOOL)textView:(NSTextView *)aTextView shouldChangeTextInRange:(NSRange)affectedCharRange replacementString:(NSString *)replacementString {
 	NSString *text = self.textView.string;
-	NSInteger commandLinePosition = [text rangeOfString:@"\n" options:NSBackwardsSearch].location + 1;
+	NSInteger commandLinePosition = [text rangeOfString:@"\n" options:NSBackwardsSearch].location;
+	if (commandLinePosition == NSNotFound) {
+		commandLinePosition = 0;
+	} else {
+		commandLinePosition += 1;
+	}
 	NSString *replacement = replacementString.copy;
 	NSRange selectedRange = self.textView.selectedRange;
 
@@ -380,6 +400,10 @@ enum {READ, WRITE};
 	return NO;
 }
 
+- (void)appendExpression:(NSString *)expression {
+	[self textView:self.textView shouldChangeTextInRange:NSMakeRange(self.textView.string.length, 0) replacementString:expression];
+}
+
 - (NSString *)processExpression:(NSString *)expression {
 	[self startRedirecting];
 
@@ -387,7 +411,12 @@ enum {READ, WRITE};
 
 	[self stopRedirecting];
 
-	NSString *result = [NSString stringWithFormat:@"\n%@", [self output]];
+	NSString *result = [self output];
+	if ([result isEqualToString:@"(null)" ]) {
+		result = @"\n";
+	} else {
+		result = [NSString stringWithFormat:@"\n%@", result];
+	}
 
 	[self clearOutput];
 
