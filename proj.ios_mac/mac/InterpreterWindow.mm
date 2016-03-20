@@ -283,111 +283,133 @@ enum {READ, WRITE};
 }
 
 - (BOOL)textView:(NSTextView *)aTextView shouldChangeTextInRange:(NSRange)affectedCharRange replacementString:(NSString *)replacementString {
-	NSString *text = self.textView.string;
-	NSInteger commandLinePosition = [text rangeOfString:@"\n" options:NSBackwardsSearch].location;
-	if (commandLinePosition == NSNotFound) {
-		commandLinePosition = 0;
-	} else {
-		commandLinePosition += 1;
-	}
-	NSString *replacement = replacementString.copy;
-	NSRange selectedRange = self.textView.selectedRange;
+	if (!_textQueue) {
+		self.textQueue = [NSMutableArray array];
 
-	//BOOL isMultiline = range.location != NSNotFound;
-	BOOL inCommandLine = commandLinePosition <= affectedCharRange.location;
-	BOOL hasNewline = [replacementString rangeOfString:@"\n"].location != NSNotFound;
-	BOOL hasSelection = selectedRange.length > 0;
-	BOOL isSingleCharacter = replacement.length <= 1;
-
-	enum {APPEND_CHAR, APPEND_SELECTION, REPLACE_SELECTION, PASS_THROUGH} state;
-
-	if (!inCommandLine && !hasNewline && !hasSelection) {
-		state = APPEND_CHAR;
-	} else if (!inCommandLine && hasNewline && !hasSelection) {
-		state = APPEND_CHAR;
-	} else if (!inCommandLine && !hasNewline && hasSelection) {
-		state = APPEND_CHAR;
-	} else if (!inCommandLine && hasNewline && hasSelection) {
-		state = APPEND_SELECTION;
-	} else if (inCommandLine && !hasNewline && !hasSelection) {
-		state = PASS_THROUGH;
-	} else if (inCommandLine && hasNewline && !hasSelection) {
-		state = APPEND_CHAR;
-	} else if (inCommandLine && !hasNewline && hasSelection) {
-		state = PASS_THROUGH;
-	} else if (inCommandLine && hasNewline && hasSelection) {
-		state = REPLACE_SELECTION;
+		self.textQueueTimer = [NSTimer scheduledTimerWithTimeInterval:1.0/60
+															   target:self
+															 selector:@selector(processQueue)
+															 userInfo:nil
+															  repeats:YES];
 	}
 
-	NSDictionary *attributes = @{NSFontAttributeName: _font};
-
-	switch (state) {
-		case APPEND_CHAR:
-			[self appendString:replacement attributes:attributes];
-			break;
-
-		case APPEND_SELECTION:
-			[self appendString:[self stringByRemovingLastNewline:[text substringWithRange:selectedRange]] attributes:attributes];
-			break;
-
-		case REPLACE_SELECTION:
-			[self.textView.textStorage replaceCharactersInRange:selectedRange withString:replacement];
-			break;
-
-		default: //PASS_THROUGH
-			if (hasSelection) {
-				if (inCommandLine) {
-					[self.textView.textStorage replaceCharactersInRange:selectedRange withString:replacement];
-				} else {
-					[self appendString:[self stringByRemovingLastNewline:replacement] attributes:attributes];
-				}
-			} else {
-				if (isSingleCharacter) {
-					[self.textView.textStorage replaceCharactersInRange:affectedCharRange withString:replacement];
-				} else {
-					[self.textView.textStorage replaceCharactersInRange:selectedRange withString:replacement];
-				}
-			}
-			return NO;
-			break;
-	}
-
-	NSArray *expressions = [[self.textView.string substringFromIndex:commandLinePosition] componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
-
-	[self.textView.textStorage replaceCharactersInRange:NSMakeRange(commandLinePosition, self.textView.string.length - commandLinePosition) withString:@""];
-
-	NSDictionary *resultAttributes = @{NSFontAttributeName: _font,
-									   NSForegroundColorAttributeName: [NSColor grayColor]};
-
-	for (NSInteger i = 0; i < expressions.count; i++) {
-		NSString *expression = expressions[i];
-		[self appendString:expression attributes:attributes];
-
-		if (expression.length > 0 && i < expressions.count - 1) {
-			[self startRedirecting];
-
-			_interpreter->process(expression.UTF8String);
-
-			[self stopRedirecting];
-
-			NSString *result = [self output];
-			if (![result isEqualToString:@"(null)" ]) {
-				result = [NSString stringWithFormat:@"\n%@", [self stringByRemovingLastNewline:result]];
-				[self appendString:result attributes:resultAttributes];
-			}
-
-			[self clearOutput];
-
-			[self appendString:@"\n" attributes:attributes];
-		}
-	}
-
-	// Scroll to the bottom
-	self.textView.selectedRange = NSMakeRange(self.textView.string.length, 0);
-	[self.textView scrollRangeToVisible: NSMakeRange(self.textView.string.length, 0)];
-	[self.textView setNeedsDisplay:YES];
-
+	id range = [NSValue valueWithRange:affectedCharRange];
+	id replacement = [replacementString copy];
+	[self.textQueue addObject:@[range, replacement]];
 	return NO;
+}
+
+- (void)processQueue {
+	for (NSInteger i = 0; i < self.textQueue.count; i++) {
+		NSArray *element = [self.textQueue objectAtIndex:i];
+		NSRange affectedCharRange = [element.firstObject rangeValue];
+		NSString *replacementString = element.lastObject;
+
+		NSString *text = self.textView.string;
+		NSInteger commandLinePosition = [text rangeOfString:@"\n" options:NSBackwardsSearch].location;
+		if (commandLinePosition == NSNotFound) {
+			commandLinePosition = 0;
+		} else {
+			commandLinePosition += 1;
+		}
+		NSString *replacement = replacementString.copy;
+		NSRange selectedRange = self.textView.selectedRange;
+
+		//BOOL isMultiline = range.location != NSNotFound;
+		BOOL inCommandLine = commandLinePosition <= affectedCharRange.location;
+		BOOL hasNewline = [replacementString rangeOfString:@"\n"].location != NSNotFound;
+		BOOL hasSelection = selectedRange.length > 0;
+		BOOL isSingleCharacter = replacement.length <= 1;
+
+		enum {APPEND_CHAR, APPEND_SELECTION, REPLACE_SELECTION, PASS_THROUGH} state;
+
+		if (!inCommandLine && !hasNewline && !hasSelection) {
+			state = APPEND_CHAR;
+		} else if (!inCommandLine && hasNewline && !hasSelection) {
+			state = APPEND_CHAR;
+		} else if (!inCommandLine && !hasNewline && hasSelection) {
+			state = APPEND_CHAR;
+		} else if (!inCommandLine && hasNewline && hasSelection) {
+			state = APPEND_SELECTION;
+		} else if (inCommandLine && !hasNewline && !hasSelection) {
+			state = PASS_THROUGH;
+		} else if (inCommandLine && hasNewline && !hasSelection) {
+			state = APPEND_CHAR;
+		} else if (inCommandLine && !hasNewline && hasSelection) {
+			state = PASS_THROUGH;
+		} else if (inCommandLine && hasNewline && hasSelection) {
+			state = REPLACE_SELECTION;
+		}
+
+		NSDictionary *attributes = @{NSFontAttributeName: _font};
+
+		switch (state) {
+			case APPEND_CHAR:
+				[self appendString:replacement attributes:attributes];
+				break;
+
+			case APPEND_SELECTION:
+				[self appendString:[self stringByRemovingLastNewline:[text substringWithRange:selectedRange]] attributes:attributes];
+				break;
+
+			case REPLACE_SELECTION:
+				[self.textView.textStorage replaceCharactersInRange:selectedRange withString:replacement];
+				break;
+
+			default: //PASS_THROUGH
+				if (hasSelection) {
+					if (inCommandLine) {
+						[self.textView.textStorage replaceCharactersInRange:selectedRange withString:replacement];
+					} else {
+						[self appendString:[self stringByRemovingLastNewline:replacement] attributes:attributes];
+					}
+				} else {
+					if (isSingleCharacter) {
+						[self.textView.textStorage replaceCharactersInRange:affectedCharRange withString:replacement];
+					} else {
+						[self.textView.textStorage replaceCharactersInRange:selectedRange withString:replacement];
+					}
+				}
+				continue;
+				break;
+		}
+
+		NSArray *expressions = [[self.textView.string substringFromIndex:commandLinePosition] componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
+
+		[self.textView.textStorage replaceCharactersInRange:NSMakeRange(commandLinePosition, self.textView.string.length - commandLinePosition) withString:@""];
+
+		NSDictionary *resultAttributes = @{NSFontAttributeName: _font,
+										   NSForegroundColorAttributeName: [NSColor grayColor]};
+
+		for (NSInteger i = 0; i < expressions.count; i++) {
+			NSString *expression = expressions[i];
+			[self appendString:expression attributes:attributes];
+
+			if (expression.length > 0 && i < expressions.count - 1) {
+				[self startRedirecting];
+
+				_interpreter->process(expression.UTF8String);
+
+				[self stopRedirecting];
+
+				NSString *result = [self output];
+				if (![result isEqualToString:@"(null)" ]) {
+					result = [NSString stringWithFormat:@"\n%@", [self stringByRemovingLastNewline:result]];
+					[self appendString:result attributes:resultAttributes];
+				}
+
+				[self clearOutput];
+
+				[self appendString:@"\n" attributes:attributes];
+			}
+		}
+
+		// Scroll to the bottom
+		self.textView.selectedRange = NSMakeRange(self.textView.string.length, 0);
+		[self.textView scrollRangeToVisible: NSMakeRange(self.textView.string.length, 0)];
+		[self.textView setNeedsDisplay:YES];
+	}
+	[self.textQueue removeAllObjects];
 }
 
 - (void)processExpression:(NSString *)expression {

@@ -17,10 +17,12 @@
 	int _oldStandardOutput;
 	int _oldStandardError;
 	BOOL _redirecting;
-	NSMutableString* _redirectedOutput;
+	NSMutableString *_redirectedOutput;
 }
 
 @property (nonatomic, strong) IBOutlet NSTextView *textView;
+@property (nonatomic, strong) NSMutableArray *textQueue;
+@property (nonatomic, strong) NSTimer *textQueueTimer;
 
 - (void)exportToInterpreter:(const std::string)typeName name:(std::string)name object:(void *)object;
 
