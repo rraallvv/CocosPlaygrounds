@@ -291,6 +291,11 @@ enum {READ, WRITE};
 															 selector:@selector(processQueue)
 															 userInfo:nil
 															  repeats:YES];
+
+		auto scheduler = cocos2d::Director::getInstance()->getScheduler();
+		scheduler->schedule([](float dt) {
+			//printf(".");
+		}, self, 0.0f, CC_REPEAT_FOREVER, 0.0f, false, "ProcessQueue");
 	}
 
 	id range = [NSValue valueWithRange:affectedCharRange];
