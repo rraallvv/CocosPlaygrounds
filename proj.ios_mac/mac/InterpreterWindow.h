@@ -13,11 +13,11 @@
 @private
 	cling::Interpreter *_interpreter;
 	NSFont *_font;
-	int redirectionPipe[2];
-	int oldStandardOutput;
-	int oldStandardError;
-	BOOL redirecting;
-	NSMutableString* redirectedOutput;
+	int _redirectionPipe[2];
+	int _oldStandardOutput;
+	int _oldStandardError;
+	BOOL _redirecting;
+	NSMutableString* _redirectedOutput;
 }
 
 @property (nonatomic, strong) IBOutlet NSTextView *textView;
