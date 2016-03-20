@@ -321,25 +321,6 @@ enum {READ, WRITE};
 
 	NSDictionary *attributes = @{NSFontAttributeName: _font};
 
-	if (state == PASS_THROUGH) {
-		if (hasSelection) {
-			if (inCommandLine) {
-				[self.textView.textStorage replaceCharactersInRange:selectedRange withString:replacement];
-			} else {
-				[self appendString:[self stringByRemovingLastNewline:replacement] attributes:attributes];
-			}
-			return NO;
-		} else {
-			if (isSingleCharacter) {
-				[self.textView.textStorage replaceCharactersInRange:affectedCharRange withString:replacement];
-				return NO;
-			} else {
-				[self.textView.textStorage replaceCharactersInRange:selectedRange withString:replacement];
-				return NO;
-			}
-		}
-	}
-
 	switch (state) {
 		case APPEND_CHAR:
 			[self appendString:replacement attributes:attributes];
@@ -354,6 +335,20 @@ enum {READ, WRITE};
 			break;
 
 		default: //PASS_THROUGH
+			if (hasSelection) {
+				if (inCommandLine) {
+					[self.textView.textStorage replaceCharactersInRange:selectedRange withString:replacement];
+				} else {
+					[self appendString:[self stringByRemovingLastNewline:replacement] attributes:attributes];
+				}
+			} else {
+				if (isSingleCharacter) {
+					[self.textView.textStorage replaceCharactersInRange:affectedCharRange withString:replacement];
+				} else {
+					[self.textView.textStorage replaceCharactersInRange:selectedRange withString:replacement];
+				}
+			}
+			return NO;
 			break;
 	}
 
