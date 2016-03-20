@@ -331,7 +331,8 @@ enum {READ, WRITE};
 			return NO;
 		} else {
 			if (isSingleCharacter) {
-				return YES;
+				[self.textView.textStorage replaceCharactersInRange:affectedCharRange withString:replacement];
+				return NO;
 			} else {
 				[self.textView.textStorage replaceCharactersInRange:selectedRange withString:replacement];
 				return NO;
