@@ -106,7 +106,7 @@ enum {READ, WRITE};
 		@"layer->addChild(sprite);\n";
 
 		[self processExpression:expression];
-#else
+#elif 0
 		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
 			expression = @"auto sprite = Sprite::create(\"icon.png\");\n";
 			[self processExpression:expression];
@@ -121,6 +121,18 @@ enum {READ, WRITE};
 				});
 			});
 		});
+#elif 0
+		sleep(1);
+		expression = @"auto sprite = Sprite::create(\"icon.png\");\n";
+		[self processExpression:expression];
+
+		sleep(1);
+		expression = @"sprite->setPosition(director->getWinSize()/2);\n";
+		[self processExpression:expression];
+
+		sleep(1);
+		expression = @"layer->addChild(sprite);\n";
+		[self processExpression:expression];
 #endif
 		//self.textView.string = [NSString stringWithFormat:@"%s", expression.c_str()];
 
