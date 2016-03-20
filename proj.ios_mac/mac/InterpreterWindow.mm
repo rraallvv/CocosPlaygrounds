@@ -86,9 +86,6 @@ enum {READ, WRITE};
 		_interpreter->process("using namespace cocos2d;");
 
 		__block NSString *expression =
-		@"/************ CocosPlaygrounds *************\n"
-		@" * Type C++ code and press enter to run it *\n"
-		@" *******************************************/\n\n"
 		@"auto rootNode = CSLoader::createNode(\"MainScene.csb\");\n"
 		@"auto layer = Layer::create();\n"
 		@"layer->addChild(rootNode);\n"
@@ -286,11 +283,13 @@ enum {READ, WRITE};
 	if (!_textQueue) {
 		self.textQueue = [NSMutableArray array];
 
+		//*
 		self.textQueueTimer = [NSTimer scheduledTimerWithTimeInterval:1.0/60
 															   target:self
 															 selector:@selector(processQueue)
 															 userInfo:nil
 															  repeats:YES];
+		//*/
 
 		auto scheduler = cocos2d::Director::getInstance()->getScheduler();
 		scheduler->schedule([](float dt) {
@@ -301,6 +300,7 @@ enum {READ, WRITE};
 	id range = [NSValue valueWithRange:affectedCharRange];
 	id replacement = [replacementString copy];
 	[self.textQueue addObject:@[range, replacement]];
+	//[self processQueue];
 	return NO;
 }
 
@@ -398,7 +398,7 @@ enum {READ, WRITE};
 				[self stopRedirecting];
 
 				NSString *result = [self output];
-				if (![result isEqualToString:@"(null)" ]) {
+				if (result.length > 0 && ![result isEqualToString:@"(null)"]) {
 					result = [NSString stringWithFormat:@"\n%@", [self stringByRemovingLastNewline:result]];
 					[self appendString:result attributes:resultAttributes];
 				}
