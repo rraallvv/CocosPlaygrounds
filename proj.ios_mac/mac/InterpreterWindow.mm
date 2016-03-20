@@ -392,43 +392,6 @@ enum {READ, WRITE};
 	[self.textView scrollRangeToVisible: NSMakeRange(self.textView.string.length, 0)];
 	[self.textView setNeedsDisplay:YES];
 
-#if 0
-	dispatch_async(dispatch_get_main_queue(), ^{
-		NSString *expression = nil;
-
-		if (selectedRange.length == 0) {
-			expression = replacement;
-		} else {
-			expression = [self stringByRemovingNewline:[text substringWithRange:selectedRange]];
-		}
-
-		[self appendString:expression attributes:@{NSFontAttributeName: _font}];
-
-		NSString *expression = [text substringFromIndex:NSMaxRange(range)];
-
-		NSString *result = [NSString stringWithFormat:@"%@", [self processExpression:expression]];
-
-		if (result.length - 1 == [result rangeOfString:@"\n" options:NSBackwardsSearch].location) {
-			result = [result substringToIndex:[result length] - 1];
-		}
-		attributedString = [[NSAttributedString alloc] initWithString:result
-														   attributes:@{NSFontAttributeName: _font,
-																		NSForegroundColorAttributeName: [NSColor grayColor]}];
-		[self.textView.textStorage appendAttributedString:attributedString];
-
-		attributedString = [[NSAttributedString alloc] initWithString:@"\n"
-														   attributes:@{NSFontAttributeName: _font,
-																		NSForegroundColorAttributeName: [NSColor blackColor]}];
-
-		[self.textView.textStorage appendAttributedString:attributedString];
-
-		// Scroll to the bottom
-		self.textView.selectedRange = NSMakeRange(text.length, 0);
-		[self.textView scrollRangeToVisible: NSMakeRange(self.textView.string.length, 0)];
-		[self.textView setNeedsDisplay:YES];
-	});
-#endif
-
 	return NO;
 }
 
