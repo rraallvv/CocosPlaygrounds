@@ -375,15 +375,14 @@ enum {READ, WRITE};
 			[self stopRedirecting];
 
 			NSString *result = [self output];
-			if ([result isEqualToString:@"(null)" ]) {
-				result = @"\n";
-			} else {
-				result = [NSString stringWithFormat:@"\n%@", result];
+			if (![result isEqualToString:@"(null)" ]) {
+				result = [NSString stringWithFormat:@"\n%@", [self stringByRemovingLastNewline:result]];
+				[self appendString:result attributes:resultAttributes];
 			}
-			
+
 			[self clearOutput];
 
-			[self appendString:result attributes:resultAttributes];
+			[self appendString:@"\n" attributes:attributes];
 		}
 	}
 
