@@ -96,14 +96,14 @@ enum {READ, WRITE};
 
 		[self processExpression:expression];
 
-#if 1
+#if 0
 		expression =
 		@"auto sprite = Sprite::create(\"icon.png\");\n"
 		@"sprite->setPosition(director->getWinSize()/2);\n"
 		@"layer->addChild(sprite);\n";
 
 		[self processExpression:expression];
-#elif 0
+#elif 1
 		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
 			expression = @"auto sprite = Sprite::create(\"icon.png\");\n";
 			[self processExpression:expression];
@@ -283,7 +283,7 @@ enum {READ, WRITE};
 	if (!_textQueue) {
 		self.textQueue = [NSMutableArray array];
 
-		//*
+		/*
 		self.textQueueTimer = [NSTimer scheduledTimerWithTimeInterval:1.0/60
 															   target:self
 															 selector:@selector(processQueue)
@@ -292,8 +292,8 @@ enum {READ, WRITE};
 		//*/
 
 		auto scheduler = cocos2d::Director::getInstance()->getScheduler();
-		scheduler->schedule([](float dt) {
-			//printf(".");
+		scheduler->schedule([self](float dt) {
+			[self processQueue];
 		}, self, 0.0f, CC_REPEAT_FOREVER, 0.0f, false, "ProcessQueue");
 	}
 
