@@ -9,6 +9,10 @@
 #import "InterpreterWindow.h"
 #include <iostream>
 #include <fcntl.h>
+#include "cocostudio/CocoStudio.h"
+#include "ComponentCPP.h"
+
+using namespace cocos2d;
 
 static const char *argv[] = {
 	"/usr/local/opt/root/etc",
@@ -85,6 +89,7 @@ enum {READ, WRITE};
 		_interpreter->process("using namespace std;");
 		_interpreter->process("using namespace cocos2d;");
 
+#if 0// use C++ interpreter
 		__block NSString *expression =
 		@"auto rootNode = CSLoader::createNode(\"MainScene.csb\");\n"
 		@"auto layer = Layer::create();\n"
@@ -96,14 +101,14 @@ enum {READ, WRITE};
 
 		[self processExpression:expression];
 
-#if 0
+#	if 0
 		expression =
 		@"auto sprite = Sprite::create(\"icon.png\");\n"
 		@"sprite->setPosition(director->getWinSize()/2);\n"
 		@"layer->addChild(sprite);\n";
 
 		[self processExpression:expression];
-#elif 1
+#	elif 0
 		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
 			expression = @"auto sprite = Sprite::create(\"icon.png\");\n";
 			[self processExpression:expression];
@@ -118,7 +123,7 @@ enum {READ, WRITE};
 				});
 			});
 		});
-#elif 0
+#	elif 0
 		sleep(1);
 		expression = @"auto sprite = Sprite::create(\"icon.png\");\n";
 		[self processExpression:expression];
@@ -130,7 +135,31 @@ enum {READ, WRITE};
 		sleep(1);
 		expression = @"layer->addChild(sprite);\n";
 		[self processExpression:expression];
+#	endif
+
+#else// use C++ compiled code
+		auto rootNode = CSLoader::createNode("MainScene.csb");
+		auto layer = Layer::create();
+		layer->addChild(rootNode);
+		auto scene = Scene::create();
+		scene->addChild(layer);
+		auto director = Director::getInstance();
+		director->runWithScene(scene);
+
+		auto sprite = Sprite::create("icon.png");
+		sprite->setPosition(director->getWinSize()/2);
+		layer->addChild(sprite);
+
+		auto component = ComponentCPP::create();
+		if (component) {
+			sprite->addComponent(component);
+		}
+
+		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+			sprite->removeComponent(component);
+		});
 #endif
+
 		//self.textView.string = [NSString stringWithFormat:@"%s", expression.c_str()];
 
 		_redirectedOutput = [[NSMutableString alloc] init];
