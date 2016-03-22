@@ -89,7 +89,7 @@ enum {READ, WRITE};
 		_interpreter->process("using namespace std;");
 		_interpreter->process("using namespace cocos2d;");
 
-#if 0// use C++ interpreter
+#if 1// use C++ interpreter
 		__block NSString *expression =
 		@"auto rootNode = CSLoader::createNode(\"MainScene.csb\");\n"
 		@"auto layer = Layer::create();\n"
@@ -101,7 +101,7 @@ enum {READ, WRITE};
 
 		[self processExpression:expression];
 
-#	if 0
+#	if 1
 		expression =
 		@"auto sprite = Sprite::create(\"icon.png\");\n"
 		@"sprite->setPosition(director->getWinSize()/2);\n"
